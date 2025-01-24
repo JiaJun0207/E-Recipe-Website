@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/loginandsignup.css">
     <link href='http://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' type='text/css'>
     <title>Sign Up - Tasty Trio Recipe</title>
 </head>
