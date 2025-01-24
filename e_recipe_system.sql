@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 24, 2025 at 11:07 AM
+-- Generation Time: Jan 24, 2025 at 03:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -136,7 +136,8 @@ CREATE TABLE `registered_user` (
 --
 
 INSERT INTO `registered_user` (`userID`, `userImg`, `userName`, `userEmail`, `userPass`, `userBio`, `favID`, `reset_token`) VALUES
-(1, 'uploads/jiajun.jpg', 'JiaJun', 'chanjiajun321@gmail.com', '$2y$10$57Aju9Fjb0exX4AnP.i1CeQxnst5E14ba4L.OsnJPVKcyHKpttJGu', NULL, NULL, NULL);
+(1, 'uploads/jiajun.jpg', 'JiaJun', 'chanjiajun321@gmail.com', '$2y$10$um9GHypHGqBPfzVD3pPFxOR.DYP5Zfdrgt5eIdPuGlJFejt82mcZK', NULL, NULL, NULL),
+(5, 'uploads/2b1502f45463fbad7fde27fa54a59912.jpg', 'Kakkun', 'jiajunchanpsn0207@gmail.com', '$2y$10$Ft9Y17ShuWa.oCciK5fep.b0kNIoggSELk9eXr4c3GHOIo48c9ti2', NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -240,7 +241,7 @@ ALTER TABLE `recipe`
 -- AUTO_INCREMENT for table `registered_user`
 --
 ALTER TABLE `registered_user`
-  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
