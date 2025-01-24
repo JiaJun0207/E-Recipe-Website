@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/loginandsignup.css">
     <link href='http://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' type='text/css'>
     <title>Log In - Tasty Trio Recipe</title>
@@ -31,6 +31,8 @@
                 <input type="password" name="password" placeholder="Password" style="font-family: Poppins, sans-serif;" required>
                 <button type="submit" name="login" style="font-family: Poppins, sans-serif;">Log In</button>
                 <p>Don’t have an account? <a href="signup.php">Sign Up</a></p>
+                <!-- Forgot Password Link -->
+                <p><a href="http://localhost/E-Recipe-Website/forgot-password.php">Forgot Password?</a></p>
             </form>
         </div>
     </div>
@@ -40,6 +42,7 @@
         $email = $_POST['email'];
         $password = $_POST['password'];
 
+        // Check if the email exists in the database
         $stmt = $conn->prepare("SELECT userPass FROM Registered_User WHERE userEmail = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -48,9 +51,16 @@
 
         if (password_verify($password, $hashedPassword)) {
             $_SESSION['user_email'] = $email;
-            echo "<p>Login successful! <a href='index.php'>Go to Home</a></p>";
+
+            // Use alert for success message and redirect
+            echo "<script>
+                    alert('Login Successful!');
+                    window.location.href = 'index.php'; // Redirect to Home page
+                  </script>";
         } else {
-            echo "<p>Invalid email or password.</p>";
+            echo "<script>
+                    alert('Invalid email or password.');
+                  </script>";
         }
         $stmt->close();
     }
