@@ -153,9 +153,10 @@ $result = $conn->query($sql);
             align-items: center;
         }
         .user-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 40px; /* Adjust width as needed */
+            height: 40px; /* Match width to make it circular */
+            border-radius: 50%; /* Makes the image circular */
+            object-fit: cover; /* Ensures the image is not stretched or squashed */
             margin-right: 10px;
         }
         .user-name {
