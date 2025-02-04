@@ -1,5 +1,7 @@
-<?php include 'db.php'; ?>
-<?php session_start(); ?>
+<?php 
+include 'db.php'; 
+session_start(); 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -43,13 +45,15 @@
         $password = $_POST['password'];
 
         // Check if the email exists in the database
-        $stmt = $conn->prepare("SELECT userPass FROM Registered_User WHERE userEmail = ?");
+        $stmt = $conn->prepare("SELECT userID, userPass FROM Registered_User WHERE userEmail = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
-        $stmt->bind_result($hashedPassword);
+        $stmt->bind_result($userID, $hashedPassword);
         $stmt->fetch();
 
         if (password_verify($password, $hashedPassword)) {
+            // Set both userID and email in session
+            $_SESSION['userID'] = $userID;
             $_SESSION['user_email'] = $email;
 
             // Use alert for success message and redirect
