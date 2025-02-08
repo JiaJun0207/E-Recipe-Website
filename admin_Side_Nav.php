@@ -129,7 +129,7 @@
         <a href="manage_meal_type.php"><i class="fas fa-comments"></i> Manage Meal Type</a>
         <a href="#"><i class="fas fa-comments"></i> Manage Feedback</a>
         <a href="#"><i class="fas fa-clipboard-check"></i> Manage Recipe Status</a>
-        <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+        <a href="admin-login.php"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
 
 </body>

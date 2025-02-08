@@ -1,6 +1,10 @@
 <?php 
 include 'db.php';
-
+session_start();
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: admin-login.php");
+    exit();
+}
 // Fetch total users from 'registered_user' table
 $userQuery = "SELECT COUNT(*) AS total_users FROM registered_user";
 $userResult = mysqli_query($conn, $userQuery);
@@ -101,7 +105,7 @@ $totalFeedback = $feedbackData['total_feedback'];
 </head>
 <body>
 
-    <?php include('admin-Side-Nav.php'); ?>
+    <?php include('admin_Side_Nav.php'); ?>
 
     <!-- Main Content -->
     <div class="main-content">
