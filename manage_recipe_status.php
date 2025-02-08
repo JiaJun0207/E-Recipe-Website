@@ -1,17 +1,6 @@
 <?php
 include 'db.php';
 
-// Handle delete request (optional, can remove if not needed)
-if (isset($_GET['delete'])) {
-    $recipeID = $_GET['delete'];
-    $deleteQuery = "DELETE FROM recipe WHERE recipeID = ?";
-    $stmt = $conn->prepare($deleteQuery);
-    $stmt->bind_param("i", $recipeID);
-    $stmt->execute();
-    header("Location: manage_recipe_status.php");
-    exit();
-}
-
 // Handle update status request
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_recipeID'])) {
     $recipeID = $_POST['edit_recipeID'];
@@ -110,12 +99,7 @@ $result = $conn->query($query);
             color: white;
         }
 
-        .delete-btn {
-            background-color: #f44336;
-            color: white;
-        }
-
-        .delete-btn:hover, .edit-btn:hover, .view-btn:hover {
+        .view-btn:hover, .edit-btn:hover {
             opacity: 0.8;
         }
 
@@ -203,7 +187,7 @@ $result = $conn->query($query);
                             <td><?= $row['recipeDate'] ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="edit-btn" onclick="openEditModal('<?= $row['recipeID'] ?>', '<?= $row['recipeStatus'] ?>')">Update status</button>
+                                    <button class="edit-btn" onclick="openEditModal('<?= $row['recipeID'] ?>', '<?= $row['recipeStatus'] ?>')">Update Status</button>
                                     <a href="view_recipe.php?id=<?= $row['recipeID'] ?>" target="_blank">
                                         <button class="view-btn">View</button>
                                     </a>
