@@ -3,42 +3,33 @@ include 'db.php';
 
 // Handle delete request
 if (isset($_GET['delete'])) {
-    $diffID = $_GET['delete'];
-    $deleteQuery = "DELETE FROM meal_difficulty WHERE diffID = ?";
+    $feedbackID = $_GET['delete'];
+    $deleteQuery = "DELETE FROM feedback WHERE feedbackID = ?";
     $stmt = $conn->prepare($deleteQuery);
-    $stmt->bind_param("i", $diffID);
+    $stmt->bind_param("i", $feedbackID);
     $stmt->execute();
-    header("Location: manage_difficulty.php");
+    header("Location: manage_feedback.php");
     exit();
 }
 
-// Handle add difficulty request
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['mealDiff'])) {
-    $mealDiff = $_POST['mealDiff'];
-    if (!empty($mealDiff)) {
-        $insertQuery = "INSERT INTO meal_difficulty (mealDiff) VALUES (?)";
-        $stmt = $conn->prepare($insertQuery);
-        $stmt->bind_param("s", $mealDiff);
-        $stmt->execute();
-        header("Location: manage_difficulty.php");
-        exit();
-    }
-}
-
-// Handle edit difficulty request
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_diffID'])) {
-    $diffID = $_POST['edit_diffID'];
-    $mealDiff = $_POST['edit_mealDiff'];
-    $updateQuery = "UPDATE meal_difficulty SET mealDiff = ? WHERE diffID = ?";
+// Handle edit feedback request
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_feedbackID'])) {
+    $feedbackID = $_POST['edit_feedbackID'];
+    $comment = $_POST['edit_comment'];
+    $updateQuery = "UPDATE feedback SET comment = ? WHERE feedbackID = ?";
     $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("si", $mealDiff, $diffID);
+    $stmt->bind_param("si", $comment, $feedbackID);
     $stmt->execute();
-    header("Location: manage_difficulty.php");
+    header("Location: manage_feedback.php");
     exit();
 }
 
-// Fetch all difficulty levels
-$query = "SELECT * FROM meal_difficulty";
+// Fetch all feedbacks
+$query = "SELECT feedback.feedbackID, feedback.comment, feedback.feedbackDate, 
+                 registered_user.userName, recipe.recipeName 
+          FROM feedback 
+          LEFT JOIN registered_user ON feedback.userID = registered_user.userID
+          LEFT JOIN recipe ON feedback.recipeID = recipe.recipeID";
 $result = $conn->query($query);
 ?>
 
@@ -47,7 +38,7 @@ $result = $conn->query($query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Meal Difficulty</title>
+    <title>Manage Feedback</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
@@ -90,36 +81,6 @@ $result = $conn->query($query);
 
         th {
             background-color: #f4f4f4;
-        }
-
-        .add-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .add-input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            width: 250px;
-        }
-
-        .add-btn {
-            padding: 10px 20px;
-            background-color: #f06292;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .add-btn:hover {
-            background-color: #e91e63;
         }
 
         .action-buttons {
@@ -174,12 +135,14 @@ $result = $conn->query($query);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
-        .modal-content input {
+        .modal-content textarea {
             width: 90%;
+            height: 80px;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+            resize: none;
         }
 
         .modal-content button {
@@ -208,34 +171,32 @@ $result = $conn->query($query);
     
     <!-- Main Content -->
     <div class="main-content">
-        <h1>Manage Meal Difficulty</h1>
-
-        <!-- Add New Difficulty -->
-        <div class="add-container">
-            <form action="" method="post">
-                <input type="text" name="mealDiff" class="add-input" placeholder="Enter Difficulty Level" required>
-                <button type="submit" class="add-btn">Add Difficulty</button>
-            </form>
-        </div>
+        <h1>Manage Feedback</h1>
 
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Difficulty Level</th>
+                        <th>User</th>
+                        <th>Recipe</th>
+                        <th>Comment</th>
+                        <th>Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()) { ?>
                         <tr>
-                            <td><?= $row['diffID'] ?></td>
-                            <td><?= $row['mealDiff'] ?></td>
+                            <td><?= $row['feedbackID'] ?></td>
+                            <td><?= $row['userName'] ?: 'Guest' ?></td>
+                            <td><?= $row['recipeName'] ?: 'Unknown' ?></td>
+                            <td><?= $row['comment'] ?></td>
+                            <td><?= $row['feedbackDate'] ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="edit-btn" onclick="openEditModal('<?= $row['diffID'] ?>', '<?= $row['mealDiff'] ?>')">Edit</button>
-                                    <a href="manage_difficulty.php?delete=<?= $row['diffID'] ?>" onclick="return confirm('Are you sure you want to delete this difficulty?');">
+                                    <button class="edit-btn" onclick="openEditModal('<?= $row['feedbackID'] ?>', '<?= htmlspecialchars($row['comment'], ENT_QUOTES) ?>')">Edit</button>
+                                    <a href="manage_feedback.php?delete=<?= $row['feedbackID'] ?>" onclick="return confirm('Are you sure you want to delete this feedback?');">
                                         <button class="delete-btn">Delete</button>
                                     </a>
                                 </div>
@@ -250,10 +211,10 @@ $result = $conn->query($query);
     <!-- Edit Popup Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <h3>Edit Difficulty</h3>
+            <h3>Edit Feedback</h3>
             <form method="post">
-                <input type="hidden" id="edit_diffID" name="edit_diffID">
-                <input type="text" id="edit_mealDiff" name="edit_mealDiff" required>
+                <input type="hidden" id="edit_feedbackID" name="edit_feedbackID">
+                <textarea id="edit_comment" name="edit_comment" required></textarea>
                 <button type="submit" class="save-btn">Save</button>
                 <button type="button" class="close-btn" onclick="closeEditModal()">Cancel</button>
             </form>
@@ -261,9 +222,9 @@ $result = $conn->query($query);
     </div>
 
     <script>
-        function openEditModal(id, name) {
-            document.getElementById("edit_diffID").value = id;
-            document.getElementById("edit_mealDiff").value = name;
+        function openEditModal(id, comment) {
+            document.getElementById("edit_feedbackID").value = id;
+            document.getElementById("edit_comment").value = comment;
             document.getElementById("editModal").style.display = "block";
         }
 

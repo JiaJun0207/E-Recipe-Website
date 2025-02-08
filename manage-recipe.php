@@ -14,7 +14,7 @@
         }
         /* Main Content */
         .main-content {
-            margin-left: 220px;
+            margin-left: 240px;
             padding: 20px;
         }
 
