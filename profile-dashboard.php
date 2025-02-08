@@ -5,24 +5,28 @@ session_start();
 // Include your database connection file
 include 'db.php';
 
-// Check if user is logged in
-if (!isset($_SESSION['userID'])) {
-    header("Location: login.php");
-    exit();
-}
+// Initialize variables for user data
+$userImg = 'uploads/default.png';
+$userName = 'Guest';
+$userEmail = '';
+$userBio = '';
 
-$userID = $_SESSION['userID'];
-$query = "SELECT userImg, userName, userEmail FROM registered_user WHERE userID = ?";
-$stmt = $conn->prepare($query);
-if ($stmt) {
-    $stmt->bind_param("i", $userID);
-    if ($stmt->execute()) {
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            $userData = $result->fetch_assoc();
-            $userImg = $userData['userImg'];
-            $userName = $userData['userName'];
-            $userEmail = $userData['userEmail'];
+// Check if user is logged in
+if (isset($_SESSION['userID'])) {
+    $userID = $_SESSION['userID'];
+    $query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
+    $stmt = $conn->prepare($query);
+    if ($stmt) {
+        $stmt->bind_param("i", $userID);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                $userData = $result->fetch_assoc();
+                $userImg = $userData['userImg'];
+                $userName = $userData['userName'];
+                $userEmail = $userData['userEmail'];
+                $userBio = $userData['userBio'];
+            }
         }
     }
 }
@@ -32,42 +36,16 @@ if ($stmt) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change Password - Tasty Trio Recipe</title>
+    <title>Dashboard - Tasty Trio Recipe</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function sendResetLink() {
-            $("#toast-container").html('<div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">' +
-                '<div class="d-flex">' +
-                '<div class="toast-body">' +
-                '<i class="fas fa-spinner fa-spin"></i> Sending reset link...' +
-                '</div>' +
-                '</div>' +
-                '</div>');
-            
-            $.post("send-reset-link.php", { email: "<?php echo $userEmail; ?>" }, function(response) {
-                $("#toast-container").html('<div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">' +
-                    '<div class="d-flex">' +
-                    '<div class="toast-body">Reset link has been sent to your email.</div>' +
-                    '<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' +
-                    '</div>' +
-                    '</div>');
-            });
-        }
-    </script>
-        <style>
+    <style>
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f9f9f9;
-        }
-        #toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1050;
         }
         .active-link {
             color: #E75480 !important;
@@ -179,22 +157,35 @@ if ($stmt) {
         <img src="assets/pic/TastyTrioLogo.png" alt="Logo">
         <h1>Tasty Trio Recipe</h1>
     </div>
+    <input type="text" placeholder="What you want to cook today?">
+    <nav class="navbar">
+        <a href="index.php">Recipes</a>
+        <a href="#">Categories</a>
+        <a href="#">Favourite</a>
+        <a href="#">About Us</a>
+    </nav>
 </header>
 <div class="profile-container">
     <div class="sidebar">
         <img src="<?php echo htmlspecialchars($userImg); ?>" alt="Profile Picture">
         <h2><?php echo htmlspecialchars($userName); ?></h2>
-        <a href="profile-dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="profile-dashboard.php" class="active-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         <a href="profile.php"><i class="fas fa-user"></i> Account Details</a>
-        <a href="change-password.php" class="active-link"><i class="fas fa-lock"></i> Change Password</a>
+        <a href="change-password.php"><i class="fas fa-lock"></i> Change Password</a>
         <a href="#"><i class="fas fa-utensils"></i> Recipe Submission</a>
         <a href="logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
     <div class="content">
-        <h3>Change Password</h3>
-        <p>If you forgot your password, click the button below to receive a password reset link.</p>
-        <button onclick="sendResetLink()" class="btn btn-primary">Send Reset Link</button>
-        <div id="toast-container"></div>
+        <h3>Dashboard</h3>
+        <p>Welcome, <strong><?php echo htmlspecialchars($userName); ?></strong></p>
+        <div class="mb-3">
+            <label class="form-label">Email:</label>
+            <input type="email" class="form-control" value="<?php echo htmlspecialchars($userEmail); ?>" disabled>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Bio:</label>
+            <textarea class="form-control" disabled><?php echo htmlspecialchars($userBio); ?></textarea>
+        </div>
     </div>
 </div>
 </body>
