@@ -188,9 +188,7 @@ $result = $conn->query($query);
                             <td>
                                 <div class="action-buttons">
                                     <button class="edit-btn" onclick="openEditModal('<?= $row['recipeID'] ?>', '<?= $row['recipeStatus'] ?>')">Update Status</button>
-                                    <a href="view_recipe.php?id=<?= $row['recipeID'] ?>" target="_blank">
-                                        <button class="view-btn">View</button>
-                                    </a>
+                                    <button class="view-btn" onclick="viewRecipe('<?= $row['recipeID'] ?>')">View</button>
                                 </div>
                             </td>
                         </tr>
@@ -226,6 +224,10 @@ $result = $conn->query($query);
 
         function closeEditModal() {
             document.getElementById("editModal").style.display = "none";
+        }
+
+        function viewRecipe(id) {
+            window.location.href = "view_recipe.php?id=" + id;
         }
     </script>
 

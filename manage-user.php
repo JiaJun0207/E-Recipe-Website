@@ -92,7 +92,6 @@
     <!-- Main Content -->
     <div class="main-content">
         <h1>Manage User</h1>
-        <a href="#" class="add-btn">Add New</a>
         <div class="table-container">
             <table>
                 <thead>
