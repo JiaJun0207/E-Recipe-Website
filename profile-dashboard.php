@@ -36,6 +36,15 @@ if (!isset($_SESSION['userID'])) {
         }
         $stmt->close();
     }
+
+    // Fetch user recipes
+    $recipeQuery = "SELECT recipeID, recipeImg, recipeName, recipeStatus, recipeDate FROM recipe WHERE userID = ? ORDER BY recipeDate DESC";
+    $recipeStmt = $conn->prepare($recipeQuery);
+    if ($recipeStmt) {
+        $recipeStmt->bind_param("i", $userID);
+        $recipeStmt->execute();
+        $recipeResult = $recipeStmt->get_result();
+    }
 }
 ?>
 
@@ -55,15 +64,6 @@ if (!isset($_SESSION['userID'])) {
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f9f9f9;
-        }
-        .modal-header {
-            background-color: #e75480;
-            color: white;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-        .modal-footer button {
-            font-weight: bold;
         }
         .profile-container {
             display: flex;
@@ -111,6 +111,36 @@ if (!isset($_SESSION['userID'])) {
         }
         .content h3 {
             font-weight: 600;
+        }
+        .recipe-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            width: 250px;
+            margin: 10px;
+            display: inline-block;
+        }
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        .recipe-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .recipe-content {
+            padding: 10px;
+        }
+        .recipe-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+        .recipe-meta {
+            font-size: 14px;
+            color: gray;
         }
     </style>
 </head>
@@ -165,6 +195,20 @@ if (!isset($_SESSION['userID'])) {
         <div class="mb-3">
             <label class="form-label">Bio:</label>
             <textarea class="form-control" disabled><?php echo htmlspecialchars($userBio); ?></textarea>
+        </div>
+
+        <h3>My Recipes</h3>
+        <div class="recipes">
+            <?php while ($row = $recipeResult->fetch_assoc()): ?>
+                <div class="recipe-card">
+                    <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
+                    <div class="recipe-content">
+                        <h4 class="recipe-title"><?= htmlspecialchars($row['recipeName']) ?></h4>
+                        <p class="recipe-meta">Status: <?= htmlspecialchars($row['recipeStatus']) ?></p>
+                        <p class="recipe-meta">Submitted: <?= htmlspecialchars(date("d M Y, H:i", strtotime($row['recipeDate']))) ?></p>
+                    </div>
+                </div>
+            <?php endwhile; ?>
         </div>
     </div>
 </div>

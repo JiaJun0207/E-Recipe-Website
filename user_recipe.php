@@ -11,7 +11,7 @@ include 'db.php';
 //     exit();
 // }
 if (!isset($_SESSION['userID'])) {
-    header("Location: login.php"); 
+    header("Location: index.php"); 
     exit();
 } else {
     $userNotLoggedIn = false; // Allow page to load normally
