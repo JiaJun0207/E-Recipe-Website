@@ -152,19 +152,7 @@ if (isset($_SESSION['userID'])) {
     </style>
 </head>
 <body>
-<header>
-    <div class="logo-title">
-        <img src="assets/pic/TastyTrioLogo.png" alt="Logo">
-        <h1>Tasty Trio Recipe</h1>
-    </div>
-    <input type="text" placeholder="What you want to cook today?">
-    <nav class="navbar">
-        <a href="index.php">Recipes</a>
-        <a href="#">Categories</a>
-        <a href="#">Favourite</a>
-        <a href="#">About Us</a>
-    </nav>
-</header>
+<?php include('header.php'); ?>
 <div class="profile-container">
     <div class="sidebar">
         <img src="<?php echo htmlspecialchars($userImg); ?>" alt="Profile Picture">

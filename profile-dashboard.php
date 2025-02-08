@@ -14,6 +14,8 @@ $userBio = '';
 // Check if user is logged in
 if (isset($_SESSION['userID'])) {
     $userID = $_SESSION['userID'];
+    
+    // Fetch user details
     $query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
     $stmt = $conn->prepare($query);
     if ($stmt) {
@@ -28,9 +30,35 @@ if (isset($_SESSION['userID'])) {
                 $userBio = $userData['userBio'];
             }
         }
+        $stmt->close();
+    }
+
+    // Fetch favorite recipes
+    $favQuery = "SELECT r.recipeID, r.recipeImg, r.recipeName, d.mealDiff, u.userName 
+                 FROM favourite f
+                 JOIN recipe r ON f.recipeID = r.recipeID
+                 JOIN registered_user u ON r.userID = u.userID
+                 JOIN meal_difficulty d ON r.diffID = d.diffID
+                 WHERE f.userID = ?";
+    
+    $favStmt = $conn->prepare($favQuery);
+    if ($favStmt) {
+        $favStmt->bind_param("i", $userID);
+        $favStmt->execute();
+        $favResult = $favStmt->get_result();
+    }
+
+    // Fetch submitted recipes
+    $subQuery = "SELECT recipeID, recipeImg, recipeName, recipeStatus, diffID FROM recipe WHERE userID = ?";
+    $subStmt = $conn->prepare($subQuery);
+    if ($subStmt) {
+        $subStmt->bind_param("i", $userID);
+        $subStmt->execute();
+        $subResult = $subStmt->get_result();
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,49 +78,6 @@ if (isset($_SESSION['userID'])) {
         .active-link {
             color: #E75480 !important;
             font-weight: bold;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .logo-title {
-            display: flex;
-            align-items: center;
-        }
-        .logo-title img {
-            height: 50px;
-            margin-right: 10px;
-        }
-        .logo-title h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin: 0;
-            color: #E75480;
-        }
-        header input {
-            width: 50%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .navbar {
-            display: flex;
-            gap: 20px;
-        }
-        .navbar a {
-            text-decoration: none;
-            color: black;
-            font-weight: 500;
-            padding: 5px 10px;
-            transition: color 0.3s ease;
-        }
-        .navbar a:hover {
-            color: #D81B60;
-            text-decoration: underline;
         }
         .profile-container {
             display: flex;
@@ -141,30 +126,40 @@ if (isset($_SESSION['userID'])) {
         .content h3 {
             font-weight: 600;
         }
-        .btn-primary {
-            background-color: #E75480;
-            border-color: #E75480;
+        .recipe-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            width: 250px;
+            margin: 10px;
+            display: inline-block;
         }
-        .btn-primary:hover {
-            background-color: #D81B60;
-            border-color: #D81B60;
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        .recipe-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .recipe-content {
+            padding: 10px;
+        }
+        .recipe-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+        .recipe-meta {
+            font-size: 14px;
+            color: gray;
         }
     </style>
 </head>
 <body>
-<header>
-    <div class="logo-title">
-        <img src="assets/pic/TastyTrioLogo.png" alt="Logo">
-        <h1>Tasty Trio Recipe</h1>
-    </div>
-    <input type="text" placeholder="What you want to cook today?">
-    <nav class="navbar">
-        <a href="index.php">Recipes</a>
-        <a href="#">Categories</a>
-        <a href="#">Favourite</a>
-        <a href="#">About Us</a>
-    </nav>
-</header>
+<?php include('header.php'); ?>
 <div class="profile-container">
     <div class="sidebar">
         <img src="<?php echo htmlspecialchars($userImg); ?>" alt="Profile Picture">
@@ -185,6 +180,32 @@ if (isset($_SESSION['userID'])) {
         <div class="mb-3">
             <label class="form-label">Bio:</label>
             <textarea class="form-control" disabled><?php echo htmlspecialchars($userBio); ?></textarea>
+        </div>
+
+        <h3>Favorite Recipes</h3>
+        <div class="recipes">
+            <?php while ($row = $favResult->fetch_assoc()): ?>
+                <div class="recipe-card">
+                    <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
+                    <div class="recipe-content">
+                        <h4 class="recipe-title"><?= htmlspecialchars($row['recipeName']) ?></h4>
+                        <p class="recipe-meta"><?= htmlspecialchars($row['userName']) ?> - <?= htmlspecialchars($row['mealDiff']) ?></p>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        </div>
+        
+        <h3>Submitted Recipes</h3>
+        <div class="recipes">
+            <?php while ($row = $subResult->fetch_assoc()): ?>
+                <div class="recipe-card">
+                    <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
+                    <div class="recipe-content">
+                        <h4 class="recipe-title"><?= htmlspecialchars($row['recipeName']) ?></h4>
+                        <p class="recipe-meta"><?= htmlspecialchars($row['recipeStatus']) ?></p>
+                    </div>
+                </div>
+            <?php endwhile; ?>
         </div>
     </div>
 </div>

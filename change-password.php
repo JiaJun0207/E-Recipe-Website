@@ -174,12 +174,7 @@ if ($stmt) {
     </style>
 </head>
 <body>
-<header>
-    <div class="logo-title">
-        <img src="assets/pic/TastyTrioLogo.png" alt="Logo">
-        <h1>Tasty Trio Recipe</h1>
-    </div>
-</header>
+<?php include('header.php'); ?>
 <div class="profile-container">
     <div class="sidebar">
         <img src="<?php echo htmlspecialchars($userImg); ?>" alt="Profile Picture">

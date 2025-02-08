@@ -127,7 +127,7 @@
     </div>
     <input type="text" placeholder="What you want to cook today?" style="font-family: 'Poppins', sans-serif;">
     <nav class="navbar">
-        <a href="#">Recipes</a>
+        <a href="index.php">Recipes</a>
         <a href="#">Categories</a>
         <a href="#">Favourite</a>
         <a href="#">About Us</a>
