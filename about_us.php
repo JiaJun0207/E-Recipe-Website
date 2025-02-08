@@ -1,35 +1,3 @@
-<?php 
-session_start();
-// Include your database connection file
-include 'db.php';
-
-// Initialize variables for user data
-$userImg = 'uploads/default.png';
-$userName = 'Guest';
-$userEmail = '';
-$userBio = '';
-
-// Check if user is logged in
-if (isset($_SESSION['userID'])) {
-    $userID = $_SESSION['userID'];
-    $query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
-    $stmt = $conn->prepare($query);
-    if ($stmt) {
-        $stmt->bind_param("i", $userID);
-        if ($stmt->execute()) {
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
-                $userData = $result->fetch_assoc();
-                $userImg = $userData['userImg'];
-                $userName = $userData['userName'];
-                $userEmail = $userData['userEmail'];
-                $userBio = $userData['userBio'];
-            }
-        }
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,13 +8,13 @@ if (isset($_SESSION['userID'])) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f9f9f9;
         }
-        .hero {
+        /* .hero {
             background: url('assets/pic/banner.jpg') no-repeat center center/cover;
             height: 300px;
             display: flex;
@@ -61,15 +29,15 @@ if (isset($_SESSION['userID'])) {
         }
 
         .hero img {
-            height: 60px; /* Adjust this value for proper size */
-            margin-right: 10px; /* Space between logo and text */
+            height: 60px; 
+            margin-right: 10px; 
         }
 
         .hero-content {
             display: flex;
             align-items: center;
             gap: 15px;
-        }
+        } */
         .section-title {
             text-align: center;
             font-weight: 600;
@@ -119,14 +87,13 @@ if (isset($_SESSION['userID'])) {
     </style>
 </head>
 <body>
-<?php include('header.php'); ?>
 
-<header class="hero">
+<!-- <header class="hero">
     <div class="hero-content">
         <img src="assets/pic/TastyTrioLogo.png" alt="Tasty Trio Recipe Logo">
         <h1 >Welcome to Tasty Trio Recipe</h1>
     </div>
-</header>
+</header> -->
 
 <section class="about-content">
     <h2 class="section-title">About Our Website</h2>

@@ -26,11 +26,18 @@
             height: 50px;
             margin-right: 10px;
         }
+        .logo-title a{
+            text-decoration: none;
+        }
         .logo-title h1 {
             font-size: 24px;
             font-weight: 600;
             margin: 0;
             color: #E75480;
+        }
+        .logo-title h1:hover{
+            color: #E75480;
+            text-decoration: underline;
         }
         header input {
             width: 50%;
@@ -123,14 +130,15 @@
 <header>
     <div class="logo-title">
         <img src="assets/pic/TastyTrioLogo.png" alt="Logo">
-        <h1>Tasty Trio Recipe</h1>
+        <!-- <h1>Tasty Trio Recipe</h1>  -->
+        <a href="index.php"><h1>Tasty Trio Recipe</h1></a>
     </div>
     <input type="text" placeholder="What you want to cook today?" style="font-family: 'Poppins', sans-serif;">
     <nav class="navbar">
-        <a href="index.php">Recipes</a>
-        <a href="#">Categories</a>
-        <a href="#">Favourite</a>
-        <a href="about-us.php">About Us</a>
+        <a href="eRecipeList.php"> All Recipes</a>
+        <!-- <a href="#">Categories</a>
+        <a href="#">Favourite</a> -->
+        <!-- <a href="about-us.php">About Us</a> -->
     </nav>
 
     <!-- Profile Dropdown -->

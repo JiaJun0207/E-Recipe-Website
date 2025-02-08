@@ -70,6 +70,6 @@ $result = mysqli_query($conn, $query);
         <?php } ?>
     </table>
     </div>
-
+    
 </body>
 </html>

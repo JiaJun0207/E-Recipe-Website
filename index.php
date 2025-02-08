@@ -62,7 +62,32 @@ $result = $conn->query($sql);
             padding: 0;
             background-color: #f9f9f9;
         }
-        .recipes {
+        .hero {
+            background: url('assets/pic/banner.jpg') no-repeat center center/cover;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+        }
+
+        .hero img {
+            height: 60px; /* Adjust this value for proper size */
+            margin-right: 10px; /* Space between logo and text */
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* .recipes {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
@@ -100,28 +125,19 @@ $result = $conn->query($sql);
             font-size: 18px;
             color: #ffd700;
             cursor: pointer;
-        }
+        } */
     </style>
 </head>
 <body>
 <?php include('header.php'); ?>
 
-<section class="recipes">
-    <?php if ($result->num_rows > 0): ?>
-        <?php while ($row = $result->fetch_assoc()): ?>
-            <div class="recipe-card">
-                <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
-                <div class="recipe-content">
-                    <h3 class="recipe-title"><?= htmlspecialchars($row['recipeName']) ?></h3>
-                    <p class="recipe-meta"><?= htmlspecialchars($row['creator']) ?> &bullet; <?= htmlspecialchars($row['mealDiff']) ?></p>
-                    <i class="favorite-icon">&#9734;</i>
-                </div>
-            </div>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <p>No recipes found.</p>
-    <?php endif; ?>
-</section>
-
+<header class="hero">
+    <div class="hero-content">
+        <img src="assets/pic/TastyTrioLogo.png" alt="Tasty Trio Recipe Logo">
+        <h1 >Welcome to Tasty Trio Recipe</h1>
+    </div>
+</header>
+<h1>Most Favourite Recipe</h1>
+<?php include('about_us.php'); ?>
 </body>
 </html>

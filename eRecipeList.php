@@ -55,10 +55,66 @@ $result = $conn->query($sql);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <style>
+                .recipes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 40px;
+        }
+        .recipe-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+        .recipe-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .recipe-content {
+            padding: 20px;
+        }
+        .recipe-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+        .recipe-meta {
+            font-size: 14px;
+            color: gray;
+        }
+        .favorite-icon {
+            float: right;
+            font-size: 18px;
+            color: #ffd700;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
 <?php include('header.php'); ?>
-
+<section class="recipes">
+    <?php if ($result->num_rows > 0): ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <div class="recipe-card">
+                <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
+                <div class="recipe-content">
+                    <h3 class="recipe-title"><?= htmlspecialchars($row['recipeName']) ?></h3>
+                    <p class="recipe-meta"><?= htmlspecialchars($row['creator']) ?> &bullet; <?= htmlspecialchars($row['mealDiff']) ?></p>
+                    <i class="favorite-icon">&#9734;</i>
+                </div>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p>No recipes found.</p>
+    <?php endif; ?>
+</section>
 </body>
 </html>
