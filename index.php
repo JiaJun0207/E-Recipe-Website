@@ -27,21 +27,9 @@ if (isset($_SESSION['userID'])) {
                 $userData = $result->fetch_assoc();
                 $userImg = $userData['userImg'];
                 $userName = $userData['userName'];
-            } else {
-                // Debug: No user found
-                echo "No user found with userID: " . $userID . "<br>";
             }
-        } else {
-            // Debug: Query execution failed
-            echo "Query execution failed: " . $stmt->error . "<br>";
         }
-    } else {
-        // Debug: Failed to prepare statement
-        echo "Failed to prepare statement: " . $conn->error . "<br>";
     }
-} else {
-    // Debug: User is not logged in
-    echo "User is not logged in.<br>";
 }
 
 // Fetch recipes
@@ -60,6 +48,13 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tasty Trio Recipe</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -106,7 +101,7 @@ $result = $conn->query($sql);
             transition: color 0.3s ease, border-bottom 0.3s ease;
         }
         .navbar a:hover {
-            color: #D81B60; /* Dark pink color */
+            color: #D81B60;
             text-decoration: underline;
         }
         .recipes {
@@ -148,20 +143,30 @@ $result = $conn->query($sql);
             color: #ffd700;
             cursor: pointer;
         }
-        .user-info {
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .profile-dropdown img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover; /* Ensures the image maintains its aspect ratio */
+            cursor: pointer;
+        }
+        .dropdown-menu {
+            min-width: 180px;
+            right: 0;
+            left: auto;
+        }
+        .dropdown-menu a {
             display: flex;
             align-items: center;
+            padding: 10px;
+            text-decoration: none;
         }
-        .user-img {
-            width: 40px; /* Adjust width as needed */
-            height: 40px; /* Match width to make it circular */
-            border-radius: 50%; /* Makes the image circular */
-            object-fit: cover; /* Ensures the image is not stretched or squashed */
-            margin-right: 10px;
-        }
-        .user-name {
-            font-weight: bold;
-            color: #333;
+        .dropdown-menu a i {
+            margin-right: 8px;
         }
     </style>
 </head>
@@ -179,9 +184,17 @@ $result = $conn->query($sql);
         <a href="#">Favourite</a>
         <a href="#">About Us</a>
     </nav>
-    <div class="user-info">
-        <img src="<?php echo htmlspecialchars($userImg); ?>" alt="User Image" class="user-img">
-        <span class="user-name"><?php echo htmlspecialchars($userName); ?></span>
+
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown">
+        <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="<?php echo htmlspecialchars($userImg); ?>" alt="Profile">
+            <span class="ms-2"><?php echo htmlspecialchars($userName); ?></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="profile.php"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a class="dropdown-item text-danger" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
     </div>
 </header>
 
