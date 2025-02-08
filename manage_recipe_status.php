@@ -1,44 +1,36 @@
 <?php
 include 'db.php';
 
-// Handle delete request
+// Handle delete request (optional, can remove if not needed)
 if (isset($_GET['delete'])) {
-    $diffID = $_GET['delete'];
-    $deleteQuery = "DELETE FROM meal_difficulty WHERE diffID = ?";
+    $recipeID = $_GET['delete'];
+    $deleteQuery = "DELETE FROM recipe WHERE recipeID = ?";
     $stmt = $conn->prepare($deleteQuery);
-    $stmt->bind_param("i", $diffID);
+    $stmt->bind_param("i", $recipeID);
     $stmt->execute();
-    header("Location: manage_difficulty.php");
+    header("Location: manage_recipe_status.php");
     exit();
 }
 
-// Handle add difficulty request
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['mealDiff'])) {
-    $mealDiff = $_POST['mealDiff'];
-    if (!empty($mealDiff)) {
-        $insertQuery = "INSERT INTO meal_difficulty (mealDiff) VALUES (?)";
-        $stmt = $conn->prepare($insertQuery);
-        $stmt->bind_param("s", $mealDiff);
-        $stmt->execute();
-        header("Location: manage_difficulty.php");
-        exit();
-    }
-}
-
-// Handle edit difficulty request
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_diffID'])) {
-    $diffID = $_POST['edit_diffID'];
-    $mealDiff = $_POST['edit_mealDiff'];
-    $updateQuery = "UPDATE meal_difficulty SET mealDiff = ? WHERE diffID = ?";
+// Handle update status request
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_recipeID'])) {
+    $recipeID = $_POST['edit_recipeID'];
+    $recipeStatus = $_POST['edit_recipeStatus'];
+    $updateQuery = "UPDATE recipe SET recipeStatus = ? WHERE recipeID = ?";
     $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("si", $mealDiff, $diffID);
+    $stmt->bind_param("si", $recipeStatus, $recipeID);
     $stmt->execute();
-    header("Location: manage_difficulty.php");
+    header("Location: manage_recipe_status.php");
     exit();
 }
 
-// Fetch all difficulty levels
-$query = "SELECT * FROM meal_difficulty";
+// Fetch all recipes
+$query = "SELECT recipe.recipeID, recipe.recipeName, recipe.recipeStatus, recipe.recipeDate, 
+                 registered_user.userName, meal_difficulty.mealDiff, meal_type.mealType 
+          FROM recipe 
+          LEFT JOIN registered_user ON recipe.userID = registered_user.userID
+          LEFT JOIN meal_difficulty ON recipe.diffID = meal_difficulty.diffID
+          LEFT JOIN meal_type ON recipe.typeID = meal_type.typeID";
 $result = $conn->query($query);
 ?>
 
@@ -47,7 +39,7 @@ $result = $conn->query($query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Meal Difficulty</title>
+    <title>Manage Recipe Status</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
@@ -92,36 +84,6 @@ $result = $conn->query($query);
             background-color: #f4f4f4;
         }
 
-        .add-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .add-input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            width: 250px;
-        }
-
-        .add-btn {
-            padding: 10px 20px;
-            background-color: #f06292;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .add-btn:hover {
-            background-color: #e91e63;
-        }
-
         .action-buttons {
             display: flex;
             justify-content: center;
@@ -138,6 +100,11 @@ $result = $conn->query($query);
             min-width: 80px;
         }
 
+        .view-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+
         .edit-btn {
             background-color: #4CAF50;
             color: white;
@@ -148,7 +115,7 @@ $result = $conn->query($query);
             color: white;
         }
 
-        .delete-btn:hover, .edit-btn:hover {
+        .delete-btn:hover, .edit-btn:hover, .view-btn:hover {
             opacity: 0.8;
         }
 
@@ -174,7 +141,7 @@ $result = $conn->query($query);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
-        .modal-content input {
+        .modal-content select {
             width: 90%;
             padding: 10px;
             margin: 10px 0;
@@ -208,35 +175,37 @@ $result = $conn->query($query);
     
     <!-- Main Content -->
     <div class="main-content">
-        <h1>Manage Meal Difficulty</h1>
-
-        <!-- Add New Difficulty -->
-        <div class="add-container">
-            <form action="" method="post">
-                <input type="text" name="mealDiff" class="add-input" placeholder="Enter Difficulty Level" required>
-                <button type="submit" class="add-btn">Add Difficulty</button>
-            </form>
-        </div>
+        <h1>Manage Recipe Status</h1>
 
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Difficulty Level</th>
+                        <th>Recipe Name</th>
+                        <th>Author</th>
+                        <th>Difficulty</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()) { ?>
                         <tr>
-                            <td><?= $row['diffID'] ?></td>
-                            <td><?= $row['mealDiff'] ?></td>
+                            <td><?= $row['recipeID'] ?></td>
+                            <td><?= $row['recipeName'] ?></td>
+                            <td><?= $row['userName'] ?: 'Guest' ?></td>
+                            <td><?= $row['mealDiff'] ?: 'Unknown' ?></td>
+                            <td><?= $row['mealType'] ?: 'Unknown' ?></td>
+                            <td><?= $row['recipeStatus'] ?></td>
+                            <td><?= $row['recipeDate'] ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="edit-btn" onclick="openEditModal('<?= $row['diffID'] ?>', '<?= $row['mealDiff'] ?>')">Edit</button>
-                                    <a href="manage_difficulty.php?delete=<?= $row['diffID'] ?>" onclick="return confirm('Are you sure you want to delete this difficulty?');">
-                                        <button class="delete-btn">Delete</button>
+                                    <button class="edit-btn" onclick="openEditModal('<?= $row['recipeID'] ?>', '<?= $row['recipeStatus'] ?>')">Update status</button>
+                                    <a href="view_recipe.php?id=<?= $row['recipeID'] ?>" target="_blank">
+                                        <button class="view-btn">View</button>
                                     </a>
                                 </div>
                             </td>
@@ -250,10 +219,14 @@ $result = $conn->query($query);
     <!-- Edit Popup Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <h3>Edit Difficulty</h3>
+            <h3>Edit Recipe Status</h3>
             <form method="post">
-                <input type="hidden" id="edit_diffID" name="edit_diffID">
-                <input type="text" id="edit_mealDiff" name="edit_mealDiff" required>
+                <input type="hidden" id="edit_recipeID" name="edit_recipeID">
+                <select id="edit_recipeStatus" name="edit_recipeStatus">
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
                 <button type="submit" class="save-btn">Save</button>
                 <button type="button" class="close-btn" onclick="closeEditModal()">Cancel</button>
             </form>
@@ -261,9 +234,9 @@ $result = $conn->query($query);
     </div>
 
     <script>
-        function openEditModal(id, name) {
-            document.getElementById("edit_diffID").value = id;
-            document.getElementById("edit_mealDiff").value = name;
+        function openEditModal(id, status) {
+            document.getElementById("edit_recipeID").value = id;
+            document.getElementById("edit_recipeStatus").value = status;
             document.getElementById("editModal").style.display = "block";
         }
 

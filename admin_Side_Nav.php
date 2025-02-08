@@ -115,8 +115,8 @@
             <a href="admin-dashboard.php">Dashboard</a>
             <a href="manage-user.php">User</a>
             <a href="manage-recipe.php">Recipe</a>
-            <a href="#">Feedback</a>
-            <a href="#">Recipe Status</a>
+            <a href="manage_feedback.php#">Feedback</a>
+            <a href="manage_recipe_status.php">Recipe Status</a>
         </div>
     </div>
 
@@ -127,8 +127,8 @@
         <a href="manage-recipe.php"><i class="fas fa-utensils"></i> Manage Recipe</a>
         <a href="manage_difficulty.php"><i class="fas fa-comments"></i> Manage Difficulty</a>
         <a href="manage_meal_type.php"><i class="fas fa-comments"></i> Manage Meal Type</a>
-        <a href="#"><i class="fas fa-comments"></i> Manage Feedback</a>
-        <a href="#"><i class="fas fa-clipboard-check"></i> Manage Recipe Status</a>
+        <a href="manage_feedback.php#"><i class="fas fa-comments"></i> Manage Feedback</a>
+        <a href="manage_recipe_status.php"><i class="fas fa-clipboard-check"></i> Manage Recipe Status</a>
         <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
 
