@@ -1,21 +1,43 @@
 <?php
 session_start();
+include 'db.php'; // Include database connection
 
-// Admin Credentials
-$adminID = "admin";
-$adminPassword = "TCC";
+$error = ""; // Initialize error message
 
 // Handle Admin Login
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["admin_login"])) {
-    $inputID = $_POST["admin_id"];
-    $inputPassword = $_POST["admin_password"];
+    $inputName = trim($_POST["admin_name"]); // Trim spaces to prevent login issues
+    $inputPassword = trim($_POST["admin_password"]);
 
-    if ($inputID === $adminID && $inputPassword === $adminPassword) {
-        $_SESSION["admin_logged_in"] = true;
-        header("Location: admin-dashboard.php");
-        exit();
+    if (!empty($inputName) && !empty($inputPassword)) {
+        // Fetch admin credentials from the database
+        $query = "SELECT adminID, adminPass FROM admin WHERE adminName = ?";
+        if ($stmt = $conn->prepare($query)) {
+            $stmt->bind_param("s", $inputName);
+            $stmt->execute();
+            $stmt->store_result();
+            $stmt->bind_result($adminID, $hashedPassword);
+            $stmt->fetch();
+
+            // Verify password
+            if ($stmt->num_rows > 0) {
+                if (password_verify($inputPassword, $hashedPassword)) {
+                    $_SESSION["admin_logged_in"] = true;
+                    $_SESSION["admin_id"] = $adminID;
+                    header("Location: admin-dashboard.php");
+                    exit();
+                } else {
+                    $error = "Incorrect password. Please try again.";
+                }
+            } else {
+                $error = "Admin not found. Please check your credentials.";
+            }
+            $stmt->close();
+        } else {
+            $error = "Database error: Unable to prepare statement.";
+        }
     } else {
-        $error = "Invalid Admin ID or Password.";
+        $error = "Please enter both Admin Name and Password.";
     }
 }
 ?>
@@ -25,13 +47,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["admin_login"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><strong>Admin Log In - Tasty Trio Recipe</strong></title>
-    <link href='http://fonts.googleapis.com/css?family=Poppins:wght@600' rel='stylesheet' type='text/css'>
+    <title>Admin Log In - Tasty Trio Recipe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/loginandsignup.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
         body {
             background: linear-gradient(to right, #e75480, #8a2be2);
@@ -75,11 +98,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["admin_login"])) {
             margin-bottom: 10px;
         }
         .logo-container img {
-            width: 50px; /* Smaller logo */
+            width: 50px;
             height: auto;
         }
         .logo-container h3 {
-            font-size: 18px; /* Reduce title font size */
+            font-size: 18px;
             color: #8a2be2;
             font-weight: bold;
         }
@@ -137,16 +160,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["admin_login"])) {
         </div>
         <h2><strong>Admin Log In</strong></h2>
         <form method="POST" action="admin-login.php">
-            <label><strong>Admin ID</strong></label>
-            <input type="text" name="admin_id" class="form-control" required>
+            <label><strong>Admin Name</strong></label>
+            <input type="text" name="admin_name" class="form-control" required>
             <label><strong>Password</strong></label>
             <input type="password" name="admin_password" class="form-control" required>
             <button type="submit" name="admin_login"><strong>Log In</strong></button>
         </form>
-        <?php if (isset($error)) echo "<p class='error'><strong>$error</strong></p>"; ?>
+        <?php if (!empty($error)) echo "<p class='error'><strong>$error</strong></p>"; ?>
         <p class="back-link"><a href="login.php"><strong>Back to User Login</strong></a></p>
     </div>
 </div>
 
 </body>
 </html>
+
+
+
