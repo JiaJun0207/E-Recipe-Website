@@ -5,16 +5,20 @@ session_start();
 // Include your database connection file
 include 'db.php';
 
-// Initialize variables for user data
-$userImg = 'uploads/default.png';
-$userName = 'Guest';
-$userEmail = '';
-$userBio = '';
+// Check if the user is not logged in
+if (!isset($_SESSION['userID'])) {
+    $userNotLoggedIn = true; // Set flag to show pop-up
+} else {
+    $userNotLoggedIn = false; // Allow page to load normally
 
-// Check if user is logged in
-if (isset($_SESSION['userID'])) {
+    // Initialize variables for user data
+    $userImg = 'uploads/default.png';
+    $userName = 'Guest';
+    $userEmail = '';
+    $userBio = '';
+
     $userID = $_SESSION['userID'];
-    
+
     // Fetch user details
     $query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
     $stmt = $conn->prepare($query);
@@ -32,30 +36,6 @@ if (isset($_SESSION['userID'])) {
         }
         $stmt->close();
     }
-
-    // Fetch favorite recipes
-    $favQuery = "SELECT r.recipeID, r.recipeImg, r.recipeName, d.mealDiff, u.userName 
-                 FROM favourite f
-                 JOIN recipe r ON f.recipeID = r.recipeID
-                 JOIN registered_user u ON r.userID = u.userID
-                 JOIN meal_difficulty d ON r.diffID = d.diffID
-                 WHERE f.userID = ?";
-    
-    $favStmt = $conn->prepare($favQuery);
-    if ($favStmt) {
-        $favStmt->bind_param("i", $userID);
-        $favStmt->execute();
-        $favResult = $favStmt->get_result();
-    }
-
-    // Fetch submitted recipes
-    $subQuery = "SELECT recipeID, recipeImg, recipeName, recipeStatus, diffID FROM recipe WHERE userID = ?";
-    $subStmt = $conn->prepare($subQuery);
-    if ($subStmt) {
-        $subStmt->bind_param("i", $userID);
-        $subStmt->execute();
-        $subResult = $subStmt->get_result();
-    }
 }
 ?>
 
@@ -70,13 +50,19 @@ if (isset($_SESSION['userID'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f9f9f9;
         }
-        .active-link {
-            color: #E75480 !important;
+        .modal-header {
+            background-color: #e75480;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .modal-footer button {
             font-weight: bold;
         }
         .profile-container {
@@ -126,40 +112,39 @@ if (isset($_SESSION['userID'])) {
         .content h3 {
             font-weight: 600;
         }
-        .recipe-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            width: 250px;
-            margin: 10px;
-            display: inline-block;
-        }
-        .recipe-card:hover {
-            transform: translateY(-5px);
-        }
-        .recipe-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-        .recipe-content {
-            padding: 10px;
-        }
-        .recipe-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0;
-        }
-        .recipe-meta {
-            font-size: 14px;
-            color: gray;
-        }
     </style>
 </head>
 <body>
+
 <?php include('header.php'); ?>
+
+<?php if ($userNotLoggedIn): ?>
+    <!-- Show Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login Required</h5>
+                </div>
+                <div class="modal-body">
+                    <p>You need to log in to access the **Profile Page**.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='home.php'">Back to Home</button>
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='index.php'">Login Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#loginModal").modal('show');
+        });
+    </script>
+
+<?php else: ?>
+
 <div class="profile-container">
     <div class="sidebar">
         <img src="<?php echo htmlspecialchars($userImg); ?>" alt="Profile Picture">
@@ -181,33 +166,10 @@ if (isset($_SESSION['userID'])) {
             <label class="form-label">Bio:</label>
             <textarea class="form-control" disabled><?php echo htmlspecialchars($userBio); ?></textarea>
         </div>
-
-        <h3>Favorite Recipes</h3>
-        <div class="recipes">
-            <?php while ($row = $favResult->fetch_assoc()): ?>
-                <div class="recipe-card">
-                    <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
-                    <div class="recipe-content">
-                        <h4 class="recipe-title"><?= htmlspecialchars($row['recipeName']) ?></h4>
-                        <p class="recipe-meta"><?= htmlspecialchars($row['userName']) ?> - <?= htmlspecialchars($row['mealDiff']) ?></p>
-                    </div>
-                </div>
-            <?php endwhile; ?>
-        </div>
-        
-        <h3>Submitted Recipes</h3>
-        <div class="recipes">
-            <?php while ($row = $subResult->fetch_assoc()): ?>
-                <div class="recipe-card">
-                    <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
-                    <div class="recipe-content">
-                        <h4 class="recipe-title"><?= htmlspecialchars($row['recipeName']) ?></h4>
-                        <p class="recipe-meta"><?= htmlspecialchars($row['recipeStatus']) ?></p>
-                    </div>
-                </div>
-            <?php endwhile; ?>
-        </div>
     </div>
 </div>
+
+<?php endif; ?>
+
 </body>
 </html>
