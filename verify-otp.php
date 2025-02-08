@@ -89,7 +89,7 @@
                 if ($stmt->execute()) {
                     echo "<script>
                             showToast('Account successfully created! Redirecting...', 'success');
-                            setTimeout(function() { window.location.href = 'login.php'; }, 3000);
+                            setTimeout(function() { window.location.href = 'index.php'; }, 3000);
                           </script>";
                 } else {
                     echo "<script>showToast('Database error: Failed to create account.', 'error');</script>";

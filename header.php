@@ -131,7 +131,7 @@
     <div class="logo-title">
         <img src="assets/pic/TastyTrioLogo.png" alt="Logo">
         <!-- <h1>Tasty Trio Recipe</h1>  -->
-        <a href="index.php"><h1>Tasty Trio Recipe</h1></a>
+        <a href="home.php"><h1>Tasty Trio Recipe</h1></a>
     </div>
     <input type="text" placeholder="What you want to cook today?" style="font-family: 'Poppins', sans-serif;">
     <nav class="navbar">

@@ -76,7 +76,7 @@ use PHPMailer\PHPMailer\Exception;
             <label for="profile_image" style="font-family: Poppins, sans-serif;" >Profile Image:</label>
             <input type="file" name="profile_image" accept="image/*" required style="font-family: Poppins, sans-serif;">
             <button type="submit" name="signup" style="font-family: Poppins, sans-serif;">Sign Up</button>
-            <p>Already a member? <a href="login.php" style="font-family: Poppins, sans-serif;">Log in</a></p>
+            <p>Already a member? <a href="index.php" style="font-family: Poppins, sans-serif;">Log in</a></p>
         </form>
     </div>
 </div>

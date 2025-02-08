@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo '<script>
                     localStorage.setItem("forceLogout", "true");
                     alert("Password has been reset successfully. You will be redirected to login.");
-                    window.location.href = "login.php";
+                    window.location.href = "index.php";
                   </script>';
         } else {
             echo '<script>alert("Error updating password."); window.history.back();</script>';

@@ -1,44 +1,6 @@
-<?php
-// Start the session
-session_start();
-
-// Include your database connection file
-include 'db.php';
-
-// Initialize variables for user data
-$userImg = 'uploads/default.png'; // Default profile image
-$userName = 'Guest';
-
-// Check if user is logged in
-if (isset($_SESSION['userID'])) {
-    $userID = $_SESSION['userID'];
-
-    // Fetch user data from the database
-    $query = "SELECT userImg, userName FROM registered_user WHERE userID = ?";
-    $stmt = $conn->prepare($query);
-
-    if ($stmt) {
-        $stmt->bind_param("i", $userID);
-
-        if ($stmt->execute()) {
-            $result = $stmt->get_result();
-
-            if ($result->num_rows > 0) {
-                $userData = $result->fetch_assoc();
-                $userImg = $userData['userImg'];
-                $userName = $userData['userName'];
-            }
-        }
-    }
-}
-
-// Fetch recipes
-$sql = "SELECT r.recipeID, r.recipeImg, r.recipeName, r.recipeStatus, r.recipeDesc, r.recipeIngred, 
-               u.userName AS creator, d.mealDiff 
-        FROM recipe r
-        JOIN registered_user u ON r.userID = u.userID
-        JOIN meal_difficulty d ON r.diffID = d.diffID";
-$result = $conn->query($sql);
+<?php 
+include 'db.php'; 
+session_start(); 
 ?>
 
 <!DOCTYPE html>
@@ -46,98 +8,111 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tasty Trio Recipe</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <!-- FontAwesome Icons -->
+    <title>Log In - Tasty Trio Recipe</title>
+    <link rel="stylesheet" href="assets/loginandsignup.css">
+    <link href='http://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script>
+        function showToast(message, type) {
+            let bgColorClass = type === 'success' ? 'bg-success' : 'bg-danger';
+            let iconHTML = type === 'success' 
+                ? '<i class="fas fa-spinner fa-spin me-2 text-white"></i>' 
+                : '<i class="fas fa-times-circle me-2 text-white"></i>';
+            
+            let toastHTML = '<div class="position-fixed bottom-0 end-0 p-3 toast-container" style="z-index: 1050;">' +
+                '<div class="toast show align-items-center text-white ' + bgColorClass + ' border-0" role="alert" aria-live="assertive" aria-atomic="true">' +
+                '<div class="d-flex">' +
+                '<div class="toast-body text-white">' + iconHTML + message + '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+            
+            $("#toast-container").html(toastHTML);
+            let toastElement = document.querySelector(".toast");
+            let toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    </script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
             background-color: #f9f9f9;
         }
-        .hero {
-            background: url('assets/pic/banner.jpg') no-repeat center center/cover;
-            height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-            padding: 20px;
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
         }
-
-        .hero img {
-            height: 60px; /* Adjust this value for proper size */
-            margin-right: 10px; /* Space between logo and text */
+        .toast {
+            font-size: 16px;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #28a745 !important;
+            color: white !important;
         }
-
-        .hero-content {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* .recipes {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px 40px;
-        }
-        .recipe-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-        .recipe-card:hover {
-            transform: translateY(-5px);
-        }
-        .recipe-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        .recipe-content {
-            padding: 20px;
-        }
-        .recipe-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0;
-        }
-        .recipe-meta {
-            font-size: 14px;
-            color: gray;
-        }
-        .favorite-icon {
-            float: right;
-            font-size: 18px;
-            color: #ffd700;
-            cursor: pointer;
-        } */
     </style>
 </head>
 <body>
-<?php include('header.php'); ?>
-
-<header class="hero">
-    <div class="hero-content">
-        <img src="assets/pic/TastyTrioLogo.png" alt="Tasty Trio Recipe Logo">
-        <h1 >Welcome to Tasty Trio Recipe</h1>
+    <div class="container">
+        <div class="left-panel">
+            <img src="assets/pic/LoginSignup.png" alt="Log In Image">
+        </div>
+        <div class="right-panel">
+            <div class="header">
+                <div class="logo-container">
+                    <img src="assets/pic/TastyTrioLogo.png" alt="Logo" class="logo">
+                </div>
+                <h1>Tasty Trio Recipe</h1>
+            </div>
+            <form method="POST" action="login.php">
+                <h2>Log In</h2>
+                <input type="email" name="email" placeholder="Email" required style="font-family: Poppins, sans-serif;">
+                <input type="password" name="password" placeholder="Password" required style="font-family: Poppins, sans-serif;">
+                <button type="submit" name="login" style="font-family: Poppins, sans-serif;">Log In</button>
+                <p>Don’t have an account? <a href="signup.php" style="font-family: Poppins, sans-serif;">Sign Up</a></p>
+                <p>or</p>
+                <p>Continue as <a href="index.php" style="font-family: Poppins, sans-serif;">Guest</a></p>
+                <p><a href="http://localhost/E-Recipe-Website/forgot-password.php" style="font-family: Poppins, sans-serif;">Forgot Password?</a></p>
+                <p><a href="admin-login.php" style="font-family: Poppins, sans-serif;">Admin Login</a></p>
+            </form>
+        </div>
     </div>
-</header>
-<h1>Most Favourite Recipe</h1>
-<?php include('about_us.php'); ?>
+
+    <div id="toast-container"></div>
+
+    <?php
+    if (isset($_POST['login'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        $stmt = $conn->prepare("SELECT userID, userPass FROM Registered_User WHERE userEmail = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->bind_result($userID, $hashedPassword);
+        $stmt->fetch();
+
+        if (password_verify($password, $hashedPassword)) {
+            $_SESSION['userID'] = $userID;
+            $_SESSION['user_email'] = $email;
+
+            echo "<script>
+                    showToast('Login Successful! Redirecting...', 'success');
+                    setTimeout(function() { window.location.href = 'home.php'; }, 2000);
+                  </script>";
+        } else {
+            echo "<script>
+                    showToast('Invalid email or password.', 'error');
+                  </script>";
+        }
+        $stmt->close();
+    }
+    ?>
 </body>
 </html>
+
+
+
+
