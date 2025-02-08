@@ -1,5 +1,6 @@
 <?php
 require 'db.php'; // Include database connection details
+session_start(); // Start session to manage user authentication
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get the token and passwords from the form submission
@@ -9,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Check if passwords match
     if ($password !== $password_confirmation) {
-        echo 'Passwords do not match';
+        echo '<script>alert("Passwords do not match"); window.history.back();</script>';
         exit;
     }
 
@@ -35,13 +36,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $update_stmt->bind_param("si", $hashed_password, $userID);
 
         if ($update_stmt->execute()) {
-            echo 'Password has been reset successfully.';
+            // Destroy all sessions to log out the user on all active devices
+            session_destroy();
+            echo '<script>
+                    localStorage.setItem("forceLogout", "true");
+                    alert("Password has been reset successfully. You will be redirected to login.");
+                    window.location.href = "login.php";
+                  </script>';
         } else {
-            echo 'Error updating password.';
+            echo '<script>alert("Error updating password."); window.history.back();</script>';
         }
     } else {
-        echo 'Invalid or expired token.';
+        echo '<script>alert("Invalid or expired token."); window.history.back();</script>';
     }
 }
 ?>
+
 
