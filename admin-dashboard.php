@@ -1,11 +1,35 @@
-<?php include 'db.php'; ?>
+<?php 
+include 'db.php';
+
+// Fetch total users from 'registered_user' table
+$userQuery = "SELECT COUNT(*) AS total_users FROM registered_user";
+$userResult = mysqli_query($conn, $userQuery);
+$userData = mysqli_fetch_assoc($userResult);
+$totalUsers = $userData['total_users'];
+
+// Fetch total recipes from 'recipe' table
+$recipeQuery = "SELECT COUNT(*) AS total_recipes FROM recipe";
+$recipeResult = mysqli_query($conn, $recipeQuery);
+$recipeData = mysqli_fetch_assoc($recipeResult);
+$totalRecipes = $recipeData['total_recipes'];
+
+// Fetch total feedbacks from 'feedback' table
+$feedbackQuery = "SELECT COUNT(*) AS total_feedback FROM feedback";
+$feedbackResult = mysqli_query($conn, $feedbackQuery);
+$feedbackData = mysqli_fetch_assoc($feedbackResult);
+$totalFeedback = $feedbackData['total_feedback'];
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Admin Dashboard</title>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
     <style>
         body {
             margin: 0;
@@ -43,8 +67,9 @@
             align-items: center;
         }
 
-        .navbar .user span {
-            margin-left: 10px;
+        .navbar .user i {
+            font-size: 22px;
+            margin-right: 5px;
         }
 
         .navbar .nav-links {
@@ -62,7 +87,7 @@
 
         /* Sidebar */
         .sidebar {
-            width: 200px;
+            width: 250px;
             background-color: #f8f8f8;
             padding: 20px 0;
             position: fixed;
@@ -74,13 +99,13 @@
             display: flex;
             align-items: center;
             color: #333;
-            padding: 10px 20px;
+            padding: 15px 25px;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 18px;
         }
 
-        .sidebar a img {
-            height: 20px;
+        .sidebar a i {
+            font-size: 22px;
             margin-right: 10px;
         }
 
@@ -95,29 +120,34 @@
 
         /* Main Content */
         .main-content {
-            margin-left: 220px;
-            padding: 20px;
+            margin-left: 270px;
+            padding: 30px;
         }
 
         .cards {
             display: flex;
-            gap: 20px;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .card {
             flex: 1;
+            min-width: 300px;
+            max-width: 400px;
             background-color: white;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 15px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             display: flex;
             align-items: center;
-            gap: 15px;
+            justify-content: center;
+            gap: 20px;
         }
 
-        .card img {
-            height: 50px;
+        .card i {
+            font-size: 50px;
         }
 
         .card-content {
@@ -126,12 +156,13 @@
 
         .card-content h3 {
             margin: 0;
-            font-size: 24px;
+            font-size: 28px;
         }
 
         .card-content p {
-            font-size: 18px;
-            color: #555;
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
         }
 
         .card:nth-child(1) {
@@ -160,6 +191,7 @@
                 <h1>Tasty Trio Recipe</h1>
             </div>
             <div class="user">
+                <i class="fas fa-user-circle"></i>
                 <span>Admin</span>
             </div>
         </div>
@@ -174,37 +206,37 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <a href="admin-dashboard.php" class="active"><img src="" alt="">Dashboard</a>
-        <a href="manage-user.php"><img src="" alt="">Manage User</a>
-        <a href="manage-recipe.php"><img src="" alt="">Manage Recipe</a>
-        <a href="#"><img src="" alt="">Manage Feedback</a>
-        <a href="#"><img src="" alt="">Manage Recipe Status</a>
-        <a href="#"><img src="" alt="">Log Out</a>
+        <a href="admin-dashboard.php" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="manage-user.php"><i class="fas fa-users"></i> Manage User</a>
+        <a href="manage-recipe.php"><i class="fas fa-utensils"></i> Manage Recipe</a>
+        <a href="#"><i class="fas fa-comments"></i> Manage Feedback</a>
+        <a href="#"><i class="fas fa-clipboard-check"></i> Manage Recipe Status</a>
+        <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-        <h1>Dashboard</h1>
+        <h1>Admin Dashboard</h1>
         <div class="cards">
             <div class="card">
-                <img src="https://via.placeholder.com/50" alt="">
+                <i class="fas fa-user"></i>
                 <div class="card-content">
                     <h3>Total Users</h3>
-                    <p>200</p>
+                    <p><?php echo $totalUsers; ?></p>
                 </div>
             </div>
             <div class="card">
-                <img src="https://via.placeholder.com/50" alt="">
+                <i class="fas fa-book-open"></i>
                 <div class="card-content">
                     <h3>Total Recipes</h3>
-                    <p>30</p>
+                    <p><?php echo $totalRecipes; ?></p>
                 </div>
             </div>
             <div class="card">
-                <img src="https://via.placeholder.com/50" alt="">
+                <i class="fas fa-comments"></i>
                 <div class="card-content">
                     <h3>Total Feedback</h3>
-                    <p>100</p>
+                    <p><?php echo $totalFeedback; ?></p>
                 </div>
             </div>
         </div>
