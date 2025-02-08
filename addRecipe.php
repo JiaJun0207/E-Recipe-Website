@@ -27,6 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $recipeDesc = $_POST['recipeDesc'];
     $diffID = $_POST['diffID'];
     $typeID = $_POST['typeID'];
+    $recipeStatus = "Pending"; // Set default status to Pending
     $uploadOk = 1;
 
     // Ensure 'uploads' directory exists
@@ -57,11 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Move uploaded file if valid
     if ($uploadOk && move_uploaded_file($_FILES["recipeImg"]["tmp_name"], $target_file)) {
         // Insert Data into Database
-        $sql = "INSERT INTO recipe (recipeImg, recipeName, recipeIngred, recipeDesc, userID, diffID, typeID)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO recipe (recipeImg, recipeName, recipeIngred, recipeDesc, recipeStatus, userID, diffID, typeID)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssiis", $target_file, $recipeName, $recipeIngred, $recipeDesc, $userID, $diffID, $typeID);
+        $stmt->bind_param("sssssiis", $target_file, $recipeName, $recipeIngred, $recipeDesc, $recipeStatus, $userID, $diffID, $typeID);
 
         if ($stmt->execute()) {
             echo "Recipe added successfully!";
