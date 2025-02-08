@@ -5,9 +5,9 @@ session_start();
 // Include database connection
 include 'db.php';
 
-// Check if user is logged in
+// Check if user is logged in, if not, redirect to login page
 if (!isset($_SESSION['userID'])) {
-    echo "Please log in to add a recipe.";
+    header("Location: login.php");
     exit();
 }
 
@@ -92,7 +92,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-
     <h2>Add a New Recipe</h2>
     <form action="addRecipe.php" method="post" enctype="multipart/form-data">
         <label>Recipe Name:</label>
@@ -127,6 +126,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         <button type="submit">Add Recipe</button>
     </form>
-
 </body>
 </html>

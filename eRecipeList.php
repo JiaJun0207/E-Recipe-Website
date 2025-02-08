@@ -10,7 +10,9 @@ $userImg = 'uploads/default.png'; // Default profile image
 $userName = 'Guest';
 
 // Check if user is logged in
+$isLoggedIn = false;
 if (isset($_SESSION['userID'])) {
+    $isLoggedIn = true;
     $userID = $_SESSION['userID'];
 
     // Fetch user data from the database
@@ -19,10 +21,8 @@ if (isset($_SESSION['userID'])) {
 
     if ($stmt) {
         $stmt->bind_param("i", $userID);
-
         if ($stmt->execute()) {
             $result = $stmt->get_result();
-
             if ($result->num_rows > 0) {
                 $userData = $result->fetch_assoc();
                 $userImg = $userData['userImg'];
@@ -54,9 +54,30 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    
     <style>
-                .recipes {
+        .add-recipe-btn {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #ff4500;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .add-recipe-btn:hover {
+            background-color: #e03e00;
+            transform: translateY(-1px);
+        }
+
+        .recipes {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
@@ -100,14 +121,20 @@ $result = $conn->query($sql);
 <body>
 
 <?php include('header.php'); ?>
+
+<!-- Add Recipe Button -->
+<?php if ($isLoggedIn): ?>
+    <a href="addRecipe.php" class="add-recipe-btn">+ Add Recipe</a>
+<?php endif; ?>
+
 <section class="recipes">
     <?php if ($result->num_rows > 0): ?>
         <?php while ($row = $result->fetch_assoc()): ?>
             <div class="recipe-card">
                 <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
                 <div class="recipe-content">
-                    <h3 class="recipe-title"><?= htmlspecialchars($row['recipeName']) ?></h3>
-                    <p class="recipe-meta"><?= htmlspecialchars($row['creator']) ?> &bullet; <?= htmlspecialchars($row['mealDiff']) ?></p>
+                    <h3 class="recipe-title"> <?= htmlspecialchars($row['recipeName']) ?> </h3>
+                    <p class="recipe-meta"> <?= htmlspecialchars($row['creator']) ?> &bullet; <?= htmlspecialchars($row['mealDiff']) ?> </p>
                     <i class="favorite-icon">&#9734;</i>
                 </div>
             </div>
@@ -116,5 +143,6 @@ $result = $conn->query($sql);
         <p>No recipes found.</p>
     <?php endif; ?>
 </section>
+
 </body>
 </html>

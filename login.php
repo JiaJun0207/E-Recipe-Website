@@ -73,6 +73,8 @@ session_start();
                 <input type="password" name="password" placeholder="Password" required style="font-family: Poppins, sans-serif;">
                 <button type="submit" name="login" style="font-family: Poppins, sans-serif;">Log In</button>
                 <p>Don’t have an account? <a href="signup.php" style="font-family: Poppins, sans-serif;">Sign Up</a></p>
+                <p>or</p>
+                <p>Continue as <a href="index.php" style="font-family: Poppins, sans-serif;">Guest</a></p>
                 <p><a href="http://localhost/E-Recipe-Website/forgot-password.php" style="font-family: Poppins, sans-serif;">Forgot Password?</a></p>
                 <p><a href="admin-login.php" style="font-family: Poppins, sans-serif;">Admin Login</a></p>
             </form>
