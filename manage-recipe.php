@@ -14,7 +14,7 @@
         }
         /* Main Content */
         .main-content {
-            margin-left: 220px;
+            margin-left: 240px;
             padding: 20px;
         }
 
@@ -87,7 +87,7 @@
 </head>
 <body>
 
-    <?php include('admin-Side-Nav.php'); ?>
+    <?php include('admin_Side_Nav.php'); ?>
     <!-- Main Content -->
     <div class="main-content">
         <h1>Manage Recipe</h1>

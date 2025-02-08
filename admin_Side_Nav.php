@@ -122,7 +122,7 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <a href="admin-dashboard.php" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="admin-dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
         <a href="manage-user.php"><i class="fas fa-users"></i> Manage User</a>
         <a href="manage-recipe.php"><i class="fas fa-utensils"></i> Manage Recipe</a>
         <a href="manage_difficulty.php"><i class="fas fa-comments"></i> Manage Difficulty</a>
