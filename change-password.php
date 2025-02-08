@@ -174,17 +174,12 @@ if ($stmt) {
     </style>
 </head>
 <body>
-<header>
-    <div class="logo-title">
-        <img src="assets/pic/TastyTrioLogo.png" alt="Logo">
-        <h1>Tasty Trio Recipe</h1>
-    </div>
-</header>
+<?php include('header.php'); ?>
 <div class="profile-container">
     <div class="sidebar">
         <img src="<?php echo htmlspecialchars($userImg); ?>" alt="Profile Picture">
         <h2><?php echo htmlspecialchars($userName); ?></h2>
-        <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="profile-dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         <a href="profile.php"><i class="fas fa-user"></i> Account Details</a>
         <a href="change-password.php" class="active-link"><i class="fas fa-lock"></i> Change Password</a>
         <a href="#"><i class="fas fa-utensils"></i> Recipe Submission</a>

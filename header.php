@@ -127,7 +127,7 @@
     </div>
     <input type="text" placeholder="What you want to cook today?" style="font-family: 'Poppins', sans-serif;">
     <nav class="navbar">
-        <a href="#">Recipes</a>
+        <a href="index.php">Recipes</a>
         <a href="#">Categories</a>
         <a href="#">Favourite</a>
         <a href="#">About Us</a>
@@ -140,7 +140,7 @@
             <span class="ms-2"><?php echo htmlspecialchars($userName); ?></span>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li><a class="dropdown-item" href="profile.php"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a class="dropdown-item" href="profile-dashboard.php"><i class="fas fa-user"></i> Profile</a></li>
             <li><a class="dropdown-item text-danger" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </div>
