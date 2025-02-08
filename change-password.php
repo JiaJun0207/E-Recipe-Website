@@ -40,8 +40,21 @@ if ($stmt) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function sendResetLink() {
+            $("#toast-container").html('<div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">' +
+                '<div class="d-flex">' +
+                '<div class="toast-body">' +
+                '<i class="fas fa-spinner fa-spin"></i> Sending reset link...' +
+                '</div>' +
+                '</div>' +
+                '</div>');
+            
             $.post("send-reset-link.php", { email: "<?php echo $userEmail; ?>" }, function(response) {
-                alert("A reset link has been sent to your email.");
+                $("#toast-container").html('<div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">' +
+                    '<div class="d-flex">' +
+                    '<div class="toast-body">Reset link has been sent to your email.</div>' +
+                    '<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' +
+                    '</div>' +
+                    '</div>');
             });
         }
     </script>
@@ -49,6 +62,12 @@ if ($stmt) {
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f9f9f9;
+        }
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
         }
         .active-link {
             color: #E75480 !important;
@@ -175,6 +194,7 @@ if ($stmt) {
         <h3>Change Password</h3>
         <p>If you forgot your password, click the button below to receive a password reset link.</p>
         <button onclick="sendResetLink()" class="btn btn-primary">Send Reset Link</button>
+        <div id="toast-container"></div>
     </div>
 </div>
 </body>
