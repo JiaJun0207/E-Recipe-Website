@@ -7,65 +7,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP - Tasty Trio Recipe</title>
     <link rel="stylesheet" href="assets/loginandsignup.css">
     <link href='http://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' type='text/css'>
-    <title>Verify OTP - Tasty Trio Recipe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showToast(message, type) {
+            let bgColorClass = type === 'success' ? 'bg-success' : 'bg-danger';
+            let iconHTML = type === 'success' 
+                ? '<i class="fas fa-spinner fa-spin me-2 text-white"></i>' 
+                : '<i class="fas fa-times-circle me-2 text-white"></i>';
+            
+            let toastHTML = '<div class="position-fixed bottom-0 end-0 p-3 toast-container" style="z-index: 1050;">' +
+                '<div class="toast show align-items-center text-white ' + bgColorClass + ' border-0" role="alert" aria-live="assertive" aria-atomic="true">' +
+                '<div class="d-flex">' +
+                '<div class="toast-body text-white">' + iconHTML + message + '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+            
+            $("#toast-container").html(toastHTML);
+            let toastElement = document.querySelector(".toast");
+            let toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    </script>
+    <style>
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        .toast {
+            background-color: #28a745 !important;
+            color: white !important;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- Left Panel with Image -->
         <div class="left-panel">
             <img src="assets/pic/LoginSignup.png" alt="OTP Verification Image">
         </div>
 
-        <!-- Right Panel with Form -->
         <div class="right-panel">
-            <!-- Header with Logo and Title -->
             <div class="header">
                 <div class="logo-container">
                     <img src="assets/pic/TastyTrioLogo.png" alt="Logo" class="logo">
                 </div>
                 <h1>Tasty Trio Recipe</h1>
             </div>
-
-            <!-- OTP Verification Form -->
             <form method="POST" action="verify-otp.php">
                 <h2>Verify OTP</h2>
-                <input type="hidden" name="email" value="<?php echo isset($_GET['email']) ? $_GET['email'] : ''; ?>">
-                <input type="hidden" name="full_name" value="<?php echo isset($_GET['full_name']) ? $_GET['full_name'] : ''; ?>">
-                <input type="hidden" name="user_img" value="<?php echo isset($_SESSION['user_img']) ? $_SESSION['user_img'] : ''; ?>">
-                <input type="text" name="otp" placeholder="Enter OTP" style="font-family: Poppins, sans-serif;" required>
+                <!-- Fixed hidden input fields -->
+                <input type="hidden" name="email" value="<?php echo isset($_GET['email']) ? htmlspecialchars($_GET['email']) : ''; ?>">
+                <input type="hidden" name="full_name" value="<?php echo isset($_GET['full_name']) ? htmlspecialchars($_GET['full_name']) : ''; ?>">
+                <input type="hidden" name="user_img" value="<?php echo isset($_SESSION['user_img']) ? htmlspecialchars($_SESSION['user_img']) : ''; ?>">
+                <input type="text" name="otp" placeholder="Enter OTP" required style="font-family: Poppins, sans-serif;">
                 <button type="submit" name="verify_otp" style="font-family: Poppins, sans-serif;">Verify OTP</button>
             </form>
         </div>
     </div>
+
+    <div id="toast-container"></div>
 
     <?php
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_otp'])) {
         $email = $_POST['email'];
         $otp = $_POST['otp'];
         $fullName = $_POST['full_name'];
-        $userImg = $_POST['user_img']; // Retrieve image path from session
-        $password = $_SESSION['password']; // Get the password from the session
+        $userImg = $_POST['user_img'];
+        $password = $_SESSION['password'];
 
-        // Check if the OTP entered matches the one stored in session
         if (isset($_SESSION['otp']) && $_SESSION['otp'] == $otp) {
-            // Insert user data into the Registered_User table
             $stmt = $conn->prepare("INSERT INTO Registered_User (userName, userEmail, userPass, userImg) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("ssss", $fullName, $email, $password, $userImg); // Bind data
-            $stmt->execute();
-            $stmt->close();
-
-            // Success message and redirect to login page
-            echo "<script>
-                    alert('Account successfully created! You can now log in.');
-                    window.location.href = 'login.php'; // Redirect to login page
-                  </script>";
+            if ($stmt) {
+                $stmt->bind_param("ssss", $fullName, $email, $password, $userImg);
+                if ($stmt->execute()) {
+                    echo "<script>
+                            showToast('Account successfully created! Redirecting...', 'success');
+                            setTimeout(function() { window.location.href = 'login.php'; }, 3000);
+                          </script>";
+                } else {
+                    echo "<script>showToast('Database error: Failed to create account.', 'error');</script>";
+                }
+                $stmt->close();
+            } else {
+                echo "<script>showToast('Database error: Statement preparation failed.', 'error');</script>";
+            }
         } else {
-            // Invalid OTP
-            echo "<script>
-                    alert('Invalid OTP. Please try again.');
-                  </script>";
+            echo "<script>showToast('Invalid OTP. Please try again.', 'error');</script>";
         }
     }
     ?>
