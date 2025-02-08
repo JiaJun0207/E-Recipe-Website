@@ -130,7 +130,7 @@
         <a href="index.php">Recipes</a>
         <a href="#">Categories</a>
         <a href="#">Favourite</a>
-        <a href="#">About Us</a>
+        <a href="about-us.php">About Us</a>
     </nav>
 
     <!-- Profile Dropdown -->
