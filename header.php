@@ -140,7 +140,7 @@
             <span class="ms-2"><?php echo htmlspecialchars($userName); ?></span>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li><a class="dropdown-item" href="profile.php"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a class="dropdown-item" href="profile-dashboard.php"><i class="fas fa-user"></i> Profile</a></li>
             <li><a class="dropdown-item text-danger" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </div>
