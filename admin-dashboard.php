@@ -1,6 +1,10 @@
 <?php 
 include 'db.php';
-
+session_start();
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: admin-login.php");
+    exit();
+}
 // Fetch total users from 'registered_user' table
 $userQuery = "SELECT COUNT(*) AS total_users FROM registered_user";
 $userResult = mysqli_query($conn, $userQuery);
