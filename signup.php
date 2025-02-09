@@ -54,6 +54,9 @@ use PHPMailer\PHPMailer\Exception;
             background-color: #28a745 !important;
             color: white !important;
         }
+        a:hover{
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
