@@ -86,6 +86,8 @@ $commentsResult = $commentsStmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Details</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 </head>
 <body>
 
@@ -99,6 +101,8 @@ $commentsResult = $commentsStmt->get_result();
     <p><strong>Meal Type:</strong> <?= $recipe['mealType'] ?></p>
     <p><strong>Description:</strong> <?= nl2br($recipe['recipeDesc']) ?></p>
     
+    <a href="eRecipeList.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back to All Recipe</a>
+
     <!-- Add to Favorites -->
     <?php if ($isLoggedIn): ?>
         <form action="add_favorite.php" method="POST">

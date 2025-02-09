@@ -126,5 +126,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         <button type="submit">Add Recipe</button>
     </form>
+    <a href="eRecipeList.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back to All Recipe</a>
 </body>
 </html>
