@@ -5,36 +5,36 @@ session_start();
 // Include your database connection file
 include 'db.php';
 
+$userImg = 'uploads/default.png';
+$userName = 'Guest';
+$userEmail = '';
+$userBio = '';
+
+$userID = $_SESSION['userID'];
+
+// Fetch user details
+$query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
+$stmt = $conn->prepare($query);
+if ($stmt) {
+    $stmt->bind_param("i", $userID);
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $userData = $result->fetch_assoc();
+            $userImg = $userData['userImg'];
+            $userName = $userData['userName'];
+            $userEmail = $userData['userEmail'];
+            $userBio = $userData['userBio'];
+        }
+    }
+    $stmt->close();
+
 // Check if the user is not logged in
 if (!isset($_SESSION['userID'])) {
+    
     $userNotLoggedIn = true; // Set flag to show pop-up
 } else {
     $userNotLoggedIn = false; // Allow page to load normally
-
-    // Initialize variables for user data
-    $userImg = 'uploads/default.png';
-    $userName = 'Guest';
-    $userEmail = '';
-    $userBio = '';
-
-    $userID = $_SESSION['userID'];
-
-    // Fetch user details
-    $query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
-    $stmt = $conn->prepare($query);
-    if ($stmt) {
-        $stmt->bind_param("i", $userID);
-        if ($stmt->execute()) {
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
-                $userData = $result->fetch_assoc();
-                $userImg = $userData['userImg'];
-                $userName = $userData['userName'];
-                $userEmail = $userData['userEmail'];
-                $userBio = $userData['userBio'];
-            }
-        }
-        $stmt->close();
     }
 
     // Fetch user recipes
@@ -182,7 +182,7 @@ if (!isset($_SESSION['userID'])) {
         <a href="profile-dashboard.php" class="active-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         <a href="profile.php"><i class="fas fa-user"></i> Account Details</a>
         <a href="change-password.php"><i class="fas fa-lock"></i> Change Password</a>
-        <a href="user_recipe.php"><i class="fas fa-utensils"></i> Recipe Submission</a>
+        <a href="user_recipe.php"><i class="fas fa-utensils"></i> My Recipes</a>
         <a href="logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
     <div class="content">
