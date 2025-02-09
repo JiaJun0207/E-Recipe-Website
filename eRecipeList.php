@@ -32,12 +32,13 @@ if (isset($_SESSION['userID'])) {
     }
 }
 
-// Fetch recipes
+// Fetch recipes (APRROVED ONLY)
 $sql = "SELECT r.recipeID, r.recipeImg, r.recipeName, r.recipeStatus, r.recipeDesc, r.recipeIngred, 
                u.userName AS creator, d.mealDiff 
         FROM recipe r
         JOIN registered_user u ON r.userID = u.userID
-        JOIN meal_difficulty d ON r.diffID = d.diffID";
+        JOIN meal_difficulty d ON r.diffID = d.diffID
+        WHERE r.recipeStatus = 'approved'";
 $result = $conn->query($sql);
 ?>
 
@@ -131,18 +132,21 @@ $result = $conn->query($sql);
     <?php if ($result->num_rows > 0): ?>
         <?php while ($row = $result->fetch_assoc()): ?>
             <div class="recipe-card">
-                <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
-                <div class="recipe-content">
-                    <h3 class="recipe-title"> <?= htmlspecialchars($row['recipeName']) ?> </h3>
-                    <p class="recipe-meta"> <?= htmlspecialchars($row['creator']) ?> &bullet; <?= htmlspecialchars($row['mealDiff']) ?> </p>
-                    <i class="favorite-icon">&#9734;</i>
-                </div>
+                <a href="user_recipe_details.php?id=<?= $row['recipeID'] ?>" style="text-decoration: none; color: inherit;">
+                    <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
+                    <div class="recipe-content">
+                        <h3 class="recipe-title"> <?= htmlspecialchars($row['recipeName']) ?> </h3>
+                        <p class="recipe-meta"> <?= htmlspecialchars($row['creator']) ?> &bullet; <?= htmlspecialchars($row['mealDiff']) ?> </p>
+                    </div>
+                </a>
+                <i class="favorite-icon">&#9734;</i>
             </div>
         <?php endwhile; ?>
     <?php else: ?>
         <p>No recipes found.</p>
     <?php endif; ?>
 </section>
+
 
 </body>
 </html>

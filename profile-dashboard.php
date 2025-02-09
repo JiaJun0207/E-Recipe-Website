@@ -5,36 +5,34 @@ session_start();
 // Include your database connection file
 include 'db.php';
 
-$userImg = 'uploads/default.png';
-$userName = 'Guest';
-$userEmail = '';
-$userBio = '';
-
-$userID = $_SESSION['userID'];
-
-// Fetch user details
-$query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
-$stmt = $conn->prepare($query);
-if ($stmt) {
-    $stmt->bind_param("i", $userID);
-    if ($stmt->execute()) {
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            $userData = $result->fetch_assoc();
-            $userImg = $userData['userImg'];
-            $userName = $userData['userName'];
-            $userEmail = $userData['userEmail'];
-            $userBio = $userData['userBio'];
-        }
-    }
-    $stmt->close();
-
-// Check if the user is not logged in
+// Check if the user is logged in
 if (!isset($_SESSION['userID'])) {
-    
+    $userImg = 'uploads/default.png';
+    $userName = 'Guest';
+    $userEmail = '';
+    $userBio = '';
     $userNotLoggedIn = true; // Set flag to show pop-up
 } else {
+    $userID = $_SESSION['userID'];
     $userNotLoggedIn = false; // Allow page to load normally
+
+    // Fetch user details
+    $query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
+    $stmt = $conn->prepare($query);
+    
+    if ($stmt) {
+        $stmt->bind_param("i", $userID);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                $userData = $result->fetch_assoc();
+                $userImg = $userData['userImg'];
+                $userName = $userData['userName'];
+                $userEmail = $userData['userEmail'];
+                $userBio = $userData['userBio'];
+            }
+        }
+        $stmt->close();
     }
 
     // Fetch user recipes

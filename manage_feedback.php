@@ -195,7 +195,7 @@ $result = $conn->query($query);
                             <td><?= $row['feedbackDate'] ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="edit-btn" onclick="openEditModal('<?= $row['feedbackID'] ?>', '<?= htmlspecialchars($row['comment'], ENT_QUOTES) ?>')">Edit</button>
+                                    
                                     <a href="manage_feedback.php?delete=<?= $row['feedbackID'] ?>" onclick="return confirm('Are you sure you want to delete this feedback?');">
                                         <button class="delete-btn">Delete</button>
                                     </a>
@@ -207,31 +207,6 @@ $result = $conn->query($query);
             </table>
         </div>
     </div>
-
-    <!-- Edit Popup Modal -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <h3>Edit Feedback</h3>
-            <form method="post">
-                <input type="hidden" id="edit_feedbackID" name="edit_feedbackID">
-                <textarea id="edit_comment" name="edit_comment" required></textarea>
-                <button type="submit" class="save-btn">Save</button>
-                <button type="button" class="close-btn" onclick="closeEditModal()">Cancel</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        function openEditModal(id, comment) {
-            document.getElementById("edit_feedbackID").value = id;
-            document.getElementById("edit_comment").value = comment;
-            document.getElementById("editModal").style.display = "block";
-        }
-
-        function closeEditModal() {
-            document.getElementById("editModal").style.display = "none";
-        }
-    </script>
 
 </body>
 </html>
