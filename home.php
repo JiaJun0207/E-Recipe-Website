@@ -87,45 +87,6 @@ $result = $conn->query($sql);
             gap: 15px;
         }
 
-        /* .recipes {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px 40px;
-        }
-        .recipe-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-        .recipe-card:hover {
-            transform: translateY(-5px);
-        }
-        .recipe-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        .recipe-content {
-            padding: 20px;
-        }
-        .recipe-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0;
-        }
-        .recipe-meta {
-            font-size: 14px;
-            color: gray;
-        }
-        .favorite-icon {
-            float: right;
-            font-size: 18px;
-            color: #ffd700;
-            cursor: pointer;
-        } */
     </style>
 </head>
 <body>

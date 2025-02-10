@@ -8,36 +8,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f9f9f9;
         }
-        /* .hero {
-            background: url('assets/pic/banner.jpg') no-repeat center center/cover;
-            height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-            padding: 20px;
-        }
 
-        .hero img {
-            height: 60px; 
-            margin-right: 10px; 
-        }
-
-        .hero-content {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        } */
         .section-title {
             text-align: center;
             font-weight: 600;
@@ -88,12 +64,6 @@
 </head>
 <body>
 
-<!-- <header class="hero">
-    <div class="hero-content">
-        <img src="assets/pic/TastyTrioLogo.png" alt="Tasty Trio Recipe Logo">
-        <h1 >Welcome to Tasty Trio Recipe</h1>
-    </div>
-</header> -->
 
 <section class="about-content">
     <h2 class="section-title">About Our Website</h2>
