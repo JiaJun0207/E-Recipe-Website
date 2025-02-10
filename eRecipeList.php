@@ -29,16 +29,16 @@ if (isset($_SESSION['userID'])) {
                 $userName = $userData['userName'];
             }
         }
+        $stmt->close();
     }
 }
 
-// Fetch recipes (APRROVED ONLY)
-$sql = "SELECT r.recipeID, r.recipeImg, r.recipeName, r.recipeStatus, r.recipeDesc, r.recipeIngred, 
-               u.userName AS creator, d.mealDiff 
+// Fetch recipes (APPROVED RECIPE ONLY)
+$sql = "SELECT r.recipeID, r.recipeImg, r.recipeName, r.recipeDate, u.userName AS creator, d.mealDiff 
         FROM recipe r
         JOIN registered_user u ON r.userID = u.userID
         JOIN meal_difficulty d ON r.diffID = d.diffID
-        WHERE r.recipeStatus = 'approved'";
+        WHERE r.recipeStatus = 'approved' ORDER BY r.recipeDate DESC";
 $result = $conn->query($sql);
 ?>
 
@@ -111,12 +111,6 @@ $result = $conn->query($sql);
             font-size: 14px;
             color: gray;
         }
-        .favorite-icon {
-            float: right;
-            font-size: 18px;
-            color: #ffd700;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -136,17 +130,16 @@ $result = $conn->query($sql);
                     <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
                     <div class="recipe-content">
                         <h3 class="recipe-title"> <?= htmlspecialchars($row['recipeName']) ?> </h3>
-                        <p class="recipe-meta"> <?= htmlspecialchars($row['creator']) ?> &bullet; <?= htmlspecialchars($row['mealDiff']) ?> </p>
+                        <p class="recipe-meta">Created by: <?= htmlspecialchars($row['creator']) ?> &bullet; <?= htmlspecialchars($row['mealDiff']) ?></p>
+                        <p class="recipe-meta">Added on: <?= date("d M Y, H:i", strtotime($row['recipeDate'])) ?></p>
                     </div>
                 </a>
-                <i class="favorite-icon">&#9734;</i>
             </div>
         <?php endwhile; ?>
     <?php else: ?>
         <p>No recipes found.</p>
     <?php endif; ?>
 </section>
-
 
 </body>
 </html>
