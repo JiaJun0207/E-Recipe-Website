@@ -26,7 +26,7 @@
             height: 50px;
             margin-right: 10px;
         }
-        .logo-title a{
+        .logo-title a {
             text-decoration: none;
         }
         .logo-title h1 {
@@ -35,15 +35,33 @@
             margin: 0;
             color: #E75480;
         }
-        .logo-title h1:hover{
+        .logo-title h1:hover {
             color: #E75480;
             text-decoration: underline;
         }
-        header input {
+        .search-bar {
+            display: flex;
+            align-items: center;
             width: 50%;
+        }
+        .search-bar input {
+            flex-grow: 1;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .search-bar button {
+            background-color: #E75480;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .search-bar button:hover {
+            background-color: #D81B60;
         }
         .navbar {
             display: flex;
@@ -60,45 +78,6 @@
             color: #D81B60;
             text-decoration: underline;
         }
-        .recipes {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px 40px;
-        }
-        .recipe-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-        .recipe-card:hover {
-            transform: translateY(-5px);
-        }
-        .recipe-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        .recipe-content {
-            padding: 20px;
-        }
-        .recipe-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0;
-        }
-        .recipe-meta {
-            font-size: 14px;
-            color: gray;
-        }
-        .favorite-icon {
-            float: right;
-            font-size: 18px;
-            color: #ffd700;
-            cursor: pointer;
-        }
         .profile-dropdown {
             position: relative;
             display: inline-block;
@@ -107,7 +86,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            object-fit: cover; /* Ensures the image maintains its aspect ratio */
+            object-fit: cover;
             cursor: pointer;
         }
         .dropdown-menu {
@@ -130,15 +109,17 @@
 <header>
     <div class="logo-title">
         <img src="assets/pic/TastyTrioLogo.png" alt="Logo">
-        <!-- <h1>Tasty Trio Recipe</h1>  -->
         <a href="home.php"><h1>Tasty Trio Recipe</h1></a>
     </div>
-    <input type="text" placeholder="What you want to cook today?" style="font-family: 'Poppins', sans-serif;">
+
+    <!-- Search Bar -->
+    <form action="searchRecipe.php" method="GET" class="search-bar">
+        <input type="text" name="query" placeholder="What do you want to cook today?" required>
+        <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+
     <nav class="navbar">
         <a href="eRecipeList.php"> All Recipes</a>
-        <!-- <a href="#">Categories</a>
-        <a href="#">Favourite</a> -->
-        <!-- <a href="about-us.php">About Us</a> -->
     </nav>
 
     <!-- Profile Dropdown -->
