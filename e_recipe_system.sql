@@ -135,17 +135,18 @@ CREATE TABLE `registered_user` (
   `userPass` varchar(255) NOT NULL,
   `userBio` text DEFAULT NULL,
   `favID` int(11) DEFAULT NULL,
-  `reset_token` varchar(255) DEFAULT NULL
+  `reset_token` varchar(255) DEFAULT NULL,
+  `userStatus` ENUM('Active', 'Inactive', 'Banned') NOT NULL DEFAULT 'Active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `registered_user`
 --
 
-INSERT INTO `registered_user` (`userID`, `userImg`, `userName`, `userEmail`, `userPass`, `userBio`, `favID`, `reset_token`) VALUES
-(1, 'uploads/2b1502f45463fbad7fde27fa54a59912.jpg', 'JiaJun', 'chanjiajun321@gmail.com', '$2y$10$Px57RUdfEaPHT7yjeJ0Ms.LuszyZtsazqyfzhUnwu5UdOQTrgy9iC', '这家伙很懒什么都没留下~', NULL, NULL),
-(5, 'uploads/2b1502f45463fbad7fde27fa54a59912.jpg', 'Kakkun', 'jiajunchanpsn0207@gmail.com', '$2y$10$Ft9Y17ShuWa.oCciK5fep.b0kNIoggSELk9eXr4c3GHOIo48c9ti2', NULL, NULL, NULL),
-(8, 'uploads/images.jpg', 'hatsune miku', 'hatsunsmikuv4x0831@gmail.com', '$2y$10$G7sKmUFuSL2yQWWHqzRAzuJ9D8h64w35Jdel1uEFgqUSwil1a5E1O', 'miku dayo~', NULL, NULL);
+INSERT INTO `registered_user` (`userID`, `userImg`, `userName`, `userEmail`, `userPass`, `userBio`, `favID`, `reset_token`, `userStatus`) VALUES
+(1, 'uploads/2b1502f45463fbad7fde27fa54a59912.jpg', 'JiaJun', 'chanjiajun321@gmail.com', '$2y$10$Px57RUdfEaPHT7yjeJ0Ms.LuszyZtsazqyfzhUnwu5UdOQTrgy9iC', '这家伙很懒什么都没留下~', NULL, NULL, 'Active'),
+(5, 'uploads/2b1502f45463fbad7fde27fa54a59912.jpg', 'Kakkun', 'jiajunchanpsn0207@gmail.com', '$2y$10$Ft9Y17ShuWa.oCciK5fep.b0kNIoggSELk9eXr4c3GHOIo48c9ti2', NULL, NULL, NULL, 'Active'),
+(8, 'uploads/images.jpg', 'hatsune miku', 'hatsunsmikuv4x0831@gmail.com', '$2y$10$G7sKmUFuSL2yQWWHqzRAzuJ9D8h64w35Jdel1uEFgqUSwil1a5E1O', 'miku dayo~', NULL, NULL, 'Active');
 
 --
 -- Indexes for dumped tables
