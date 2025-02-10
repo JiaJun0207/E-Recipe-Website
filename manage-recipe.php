@@ -8,12 +8,25 @@ if (isset($_GET['delete'])) {
     $stmt = $conn->prepare($deleteQuery);
     $stmt->bind_param("i", $recipeID);
     $stmt->execute();
-    header("Location: manage_recipe.php");
+    header("Location: manage-recipe.php");
+    exit();
+}
+
+// Handle remark update
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_recipeID'])) {
+    $recipeID = $_POST['edit_recipeID'];
+    $remark = $_POST['edit_remark'];
+
+    $updateQuery = "UPDATE recipe SET remark = ? WHERE recipeID = ?";
+    $stmt = $conn->prepare($updateQuery);
+    $stmt->bind_param("si", $remark, $recipeID);
+    $stmt->execute();
+    header("Location: manage-recipe.php");
     exit();
 }
 
 // Fetch all recipes
-$query = "SELECT recipeID, recipeName, recipeImg, recipeIngred, recipeDesc FROM recipe";
+$query = "SELECT recipeID, recipeName, recipeImg, recipeStatus, remark FROM recipe";
 $result = $conn->query($query);
 ?>
 
@@ -80,7 +93,7 @@ $result = $conn->query($query);
             cursor: pointer;
             font-size: 14px;
             display: inline-block;
-            min-width: 80px;
+            min-width: 100px;
         }
 
         .view-btn {
@@ -93,7 +106,17 @@ $result = $conn->query($query);
             color: white;
         }
 
-        .view-btn:hover, .delete-btn:hover {
+        .remark-btn {
+            background-color: #FFA500;
+            color: white;
+        }
+
+        .review-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .view-btn:hover, .delete-btn:hover, .remark-btn:hover, .review-btn:hover {
             opacity: 0.8;
         }
 
@@ -102,6 +125,57 @@ $result = $conn->query($query);
             height: 50px;
             border-radius: 5px;
             object-fit: cover;
+        }
+
+        /* Popup Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content textarea {
+            width: 90%;
+            height: 80px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+        }
+
+        .modal-content button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .close-btn {
+            background-color: #f44336;
+            color: white;
         }
     </style>
 </head>
@@ -119,8 +193,8 @@ $result = $conn->query($query);
                         <th>ID</th>
                         <th>Recipe Name</th>
                         <th>Recipe Image</th>
-                        <th>Recipe Ingredient</th>
-                        <th>Recipe Description</th>
+                        <th>Recipe Status</th>
+                        <th>Remark</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -132,12 +206,13 @@ $result = $conn->query($query);
                             <td>
                                 <img src="<?= $row['recipeImg'] ?>" alt="Recipe Image" class="recipe-image">
                             </td>
-                            <td><?= nl2br($row['recipeIngred']) ?></td>
-                            <td><?= $row['recipeDesc'] ?></td>
+                            <td><?= $row['recipeStatus'] ?></td>
+                            <td><?= $row['remark'] ?: "No remarks yet" ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="view-btn" onclick="viewRecipe('<?= $row['recipeID'] ?>')">View</button>
-                                    <button class="delete-btn" onclick="confirmDelete('<?= $row['recipeID'] ?>')">Delete</button>
+                                    <button class="view-btn" onclick="viewRecipe('<?= $row['recipeID'] ?>')">View Recipe</button>
+                                    <button class="remark-btn" onclick="openRemarkModal('<?= $row['recipeID'] ?>', '<?= $row['remark'] ?>')">Remark</button>
+                                    <button class="review-btn" onclick="viewReview('<?= $row['recipeID'] ?>')">View Reviews</button>
                                 </div>
                             </td>
                         </tr>
@@ -150,15 +225,36 @@ $result = $conn->query($query);
         </div>
     </div>
 
+    <!-- Remark Popup Modal -->
+    <div id="remarkModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Remark</h3>
+            <form method="post">
+                <input type="hidden" id="edit_recipeID" name="edit_recipeID">
+                <textarea id="edit_remark" name="edit_remark" required></textarea>
+                <button type="submit" class="save-btn">Save</button>
+                <button type="button" class="close-btn" onclick="closeRemarkModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         function viewRecipe(id) {
             window.location.href = "view_recipe.php?id=" + id;
         }
 
-        function confirmDelete(id) {
-            if (confirm("Are you sure you want to delete this recipe?")) {
-                window.location.href = "manage_recipe.php?delete=" + id;
-            }
+        function viewReview(id) {
+            window.location.href = "view_review.php?id=" + id;
+        }
+
+        function openRemarkModal(id, remark) {
+            document.getElementById("edit_recipeID").value = id;
+            document.getElementById("edit_remark").value = remark;
+            document.getElementById("remarkModal").style.display = "block";
+        }
+
+        function closeRemarkModal() {
+            document.getElementById("remarkModal").style.display = "none";
         }
     </script>
 

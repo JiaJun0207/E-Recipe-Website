@@ -114,6 +114,7 @@ CREATE TABLE `recipe` (
   `recipeDesc` text NOT NULL,
   `recipeDate` timestamp NOT NULL DEFAULT current_timestamp(),
   `recipeStatus` varchar(255) NOT NULL,
+  `remark` text DEFAULT NULL,
   `userID` int(11) DEFAULT NULL,
   `diffID` int(11) DEFAULT NULL,
   `typeID` int(11) DEFAULT NULL,
