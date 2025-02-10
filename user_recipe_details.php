@@ -1,20 +1,16 @@
 <?php
-// Start the session
 session_start();
-
-// Include your database connection file
 include 'db.php';
 
-// Initialize variables for user data
-$userImg = 'uploads/default.png'; // Default profile image
+$userImg = 'uploads/default.png'; 
 $userName = 'Guest';
 $isLoggedIn = false;
+$userID = null;
 
 if (isset($_SESSION['userID'])) {
     $isLoggedIn = true;
     $userID = $_SESSION['userID'];
 
-    // Fetch user data
     $query = "SELECT userImg, userName FROM registered_user WHERE userID = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $userID);
@@ -28,7 +24,6 @@ if (isset($_SESSION['userID'])) {
     }
 }
 
-// Check if recipe ID is provided
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     echo "Invalid Recipe ID.";
     exit();
@@ -36,7 +31,6 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 
 $recipeID = $_GET['id'];
 
-// Fetch recipe details
 $query = "SELECT recipe.*, registered_user.userName, meal_difficulty.mealDiff, meal_type.mealType 
           FROM recipe 
           LEFT JOIN registered_user ON recipe.userID = registered_user.userID
@@ -52,6 +46,17 @@ $recipe = $result->fetch_assoc();
 if (!$recipe) {
     echo "Recipe not found.";
     exit();
+}
+
+// Check if the recipe is already in the user's favorites
+$isFavorite = false;
+if ($isLoggedIn) {
+    $favQuery = "SELECT * FROM favourite WHERE userID = ? AND recipeID = ?";
+    $favStmt = $conn->prepare($favQuery);
+    $favStmt->bind_param("ii", $userID, $recipeID);
+    $favStmt->execute();
+    $favResult = $favStmt->get_result();
+    $isFavorite = $favResult->num_rows > 0;
 }
 
 // Handle comment submission
@@ -76,7 +81,6 @@ $commentsStmt = $conn->prepare($commentsQuery);
 $commentsStmt->bind_param("i", $recipeID);
 $commentsStmt->execute();
 $commentsResult = $commentsStmt->get_result();
-
 ?>
 
 <!DOCTYPE html>
@@ -87,7 +91,6 @@ $commentsResult = $commentsStmt->get_result();
     <title>Recipe Details</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
 </head>
 <body>
 
@@ -100,35 +103,18 @@ $commentsResult = $commentsStmt->get_result();
     <p><strong>Difficulty:</strong> <?= $recipe['mealDiff'] ?></p>
     <p><strong>Meal Type:</strong> <?= $recipe['mealType'] ?></p>
     <p><strong>Description:</strong> <?= nl2br($recipe['recipeDesc']) ?></p>
-    
+
     <a href="eRecipeList.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back to All Recipe</a>
 
-    <!-- Add to Favorites -->
+    <!-- Favorite Star Icon -->
     <?php if ($isLoggedIn): ?>
-        <button id="addToFavoriteBtn" class="btn btn-warning">Add to Favorites</button>
-
-        <!-- Success/Error Modal -->
-        <div class="modal fade" id="favoriteModal" tabindex="-1" aria-labelledby="favoriteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="favoriteModalLabel">Favorite Status</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" id="favoriteModalMessage">
-                        <!-- Message will be inserted here -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <i id="favoriteStar" class="<?= $isFavorite ? 'fas' : 'far' ?> fa-star favorite-icon" 
+           data-recipe-id="<?= $recipeID ?>" 
+           style="font-size: 24px; color: #ffd700; cursor: pointer;"></i>
     <?php endif; ?>
-
-
-    <!-- Comment & Rating Form -->
-    <?php if ($isLoggedIn): ?>
+    
+        <!-- Comment & Rating Form -->
+        <?php if ($isLoggedIn): ?>
         <form method="POST" class="mt-4">
             <div class="mb-3">
                 <label for="rating" class="form-label">Rating:</label>
@@ -167,25 +153,29 @@ $commentsResult = $commentsStmt->get_result();
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        $("#addToFavoriteBtn").click(function () {
+        $("#favoriteStar").click(function () {
+            var recipeID = $(this).data("recipe-id");
+            var starIcon = $(this);
+
             $.ajax({
-                url: "add_favorite.php",
+                url: "toggle_favorite.php",
                 type: "POST",
-                data: { recipeID: <?= $recipeID ?> },
+                data: { recipeID: recipeID },
                 dataType: "json",
                 success: function (response) {
-                    $("#favoriteModalMessage").text(response.message);
-                    $("#favoriteModal").modal("show");
+                    if (response.status === "added") {
+                        starIcon.removeClass("far").addClass("fas"); // Filled star
+                    } else if (response.status === "removed") {
+                        starIcon.removeClass("fas").addClass("far"); // Outlined star
+                    }
                 },
                 error: function () {
-                    $("#favoriteModalMessage").text("An error occurred.");
-                    $("#favoriteModal").modal("show");
+                    alert("An error occurred. Please try again.");
                 }
             });
         });
     });
 </script>
-
 
 </body>
 </html>
