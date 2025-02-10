@@ -35,13 +35,19 @@ if (!isset($_SESSION['userID'])) {
         $stmt->close();
     }
 
-    // Fetch user recipes
-    $recipeQuery = "SELECT recipeID, recipeImg, recipeName, recipeStatus, recipeDate FROM recipe WHERE userID = ? ORDER BY recipeDate DESC";
-    $recipeStmt = $conn->prepare($recipeQuery);
-    if ($recipeStmt) {
-        $recipeStmt->bind_param("i", $userID);
-        $recipeStmt->execute();
-        $recipeResult = $recipeStmt->get_result();
+    // Fetch favorite recipes with creator info
+    $favQuery = "SELECT r.recipeID, r.recipeImg, r.recipeName, r.recipeDate, u.userName AS creatorName 
+                 FROM favourite f
+                 JOIN recipe r ON f.recipeID = r.recipeID
+                 JOIN registered_user u ON r.userID = u.userID
+                 WHERE f.userID = ? 
+                 ORDER BY r.recipeDate DESC";
+
+    $favStmt = $conn->prepare($favQuery);
+    if ($favStmt) {
+        $favStmt->bind_param("i", $userID);
+        $favStmt->execute();
+        $favResult = $favStmt->get_result();
     }
 }
 ?>
@@ -136,6 +142,14 @@ if (!isset($_SESSION['userID'])) {
             font-weight: 600;
             margin: 0;
         }
+        .recipe-title a {
+            text-decoration: none;
+            color: #D81B60;
+            transition: 0.3s;
+        }
+        .recipe-title a:hover {
+            text-decoration: underline;
+        }
         .recipe-meta {
             font-size: 14px;
             color: gray;
@@ -187,26 +201,30 @@ if (!isset($_SESSION['userID'])) {
         <h3>Dashboard</h3>
         <p>Welcome, <strong><?php echo htmlspecialchars($userName); ?></strong></p>
         <div class="mb-3">
-            <label class="form-label">Email:</label>
-            <input type="email" class="form-control" value="<?php echo htmlspecialchars($userEmail); ?>" disabled>
-        </div>
-        <div class="mb-3">
             <label class="form-label">Bio:</label>
             <textarea class="form-control" disabled><?php echo htmlspecialchars($userBio); ?></textarea>
         </div>
-
-        <h3>My Recipes</h3>
+        
+        <h3>My Favorite Recipes</h3>
         <div class="recipes">
-            <?php while ($row = $recipeResult->fetch_assoc()): ?>
-                <div class="recipe-card">
-                    <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
-                    <div class="recipe-content">
-                        <h4 class="recipe-title"><?= htmlspecialchars($row['recipeName']) ?></h4>
-                        <p class="recipe-meta">Status: <?= htmlspecialchars($row['recipeStatus']) ?></p>
-                        <p class="recipe-meta">Submitted: <?= htmlspecialchars(date("d M Y, H:i", strtotime($row['recipeDate']))) ?></p>
+            <?php if ($favResult->num_rows > 0): ?>
+                <?php while ($row = $favResult->fetch_assoc()): ?>
+                    <div class="recipe-card">
+                        <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
+                        <div class="recipe-content">
+                            <h4 class="recipe-title">
+                                <a href="user_recipe_details.php?id=<?= $row['recipeID'] ?>">
+                                    <?= htmlspecialchars($row['recipeName']) ?>
+                                </a>
+                            </h4>
+                            <p class="recipe-meta">Created by: <?= htmlspecialchars($row['creatorName']) ?></p>
+                            <p class="recipe-meta">Added on: <?= htmlspecialchars(date("d M Y, H:i", strtotime($row['recipeDate']))) ?></p>
+                        </div>
                     </div>
-                </div>
-            <?php endwhile; ?>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p>No favorite recipes added yet.</p>
+            <?php endif; ?>
         </div>
     </div>
 </div>

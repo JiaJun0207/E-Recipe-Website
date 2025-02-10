@@ -105,11 +105,27 @@ $commentsResult = $commentsStmt->get_result();
 
     <!-- Add to Favorites -->
     <?php if ($isLoggedIn): ?>
-        <form action="add_favorite.php" method="POST">
-            <input type="hidden" name="recipeID" value="<?= $recipeID ?>">
-            <button type="submit" class="btn btn-warning">Add to Favorites</button>
-        </form>
+        <button id="addToFavoriteBtn" class="btn btn-warning">Add to Favorites</button>
+
+        <!-- Success/Error Modal -->
+        <div class="modal fade" id="favoriteModal" tabindex="-1" aria-labelledby="favoriteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="favoriteModalLabel">Favorite Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="favoriteModalMessage">
+                        <!-- Message will be inserted here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     <?php endif; ?>
+
 
     <!-- Comment & Rating Form -->
     <?php if ($isLoggedIn): ?>
@@ -148,5 +164,28 @@ $commentsResult = $commentsStmt->get_result();
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#addToFavoriteBtn").click(function () {
+            $.ajax({
+                url: "add_favorite.php",
+                type: "POST",
+                data: { recipeID: <?= $recipeID ?> },
+                dataType: "json",
+                success: function (response) {
+                    $("#favoriteModalMessage").text(response.message);
+                    $("#favoriteModal").modal("show");
+                },
+                error: function () {
+                    $("#favoriteModalMessage").text("An error occurred.");
+                    $("#favoriteModal").modal("show");
+                }
+            });
+        });
+    });
+</script>
+
+
 </body>
 </html>
