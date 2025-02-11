@@ -152,8 +152,8 @@ $result = $conn->query($sql);
 <div class="recipe-container">
     <?php while ($row = $result->fetch_assoc()) { ?>
         <a href="user_recipe_details.php?id=<?= $row['recipeID'] ?>" class="recipe-card">
-            <img src="uploads/<?= $row['recipeImg'] ?>" alt="<?= $row['recipeName'] ?>">
-            <h5><?= $row['recipeName'] ?></h5>
+            <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
+        <h5><?= $row['recipeName'] ?></h5>
             <p class="favorite-count"><i class="fa fa-heart"></i> <?= $row['favorite_count'] ?> Favorites</p>
         </a>
     <?php } ?>
