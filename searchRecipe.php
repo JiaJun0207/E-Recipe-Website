@@ -158,6 +158,19 @@ if (isset($_GET['query'])) {
         .fav-icon-gray {
             color: #ddd;
         }
+        /* Remove background and border from favorite button */
+        .fav-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        /* Adjust icon size and positioning */
+        .fav-btn i {
+            font-size: 20px; /* Adjust size */
+            transition: color 0.3s ease;
+        }
     </style>
 </head>
 <body>
