@@ -17,53 +17,62 @@
         .section-title {
             text-align: center;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: #E75480;
         }
+        
         .about-content, .mission-content {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
         }
+
         .about-content p, .mission-content p {
-            font-size: 18px;
+            font-size: 16px;
             color: #555;
             max-width: 900px;
             margin: 0 auto;
         }
+
         .team-section {
             text-align: center;
-            padding: 50px 20px;
+            padding: 30px 15px; /* Reduced padding */
             background: white;
         }
+
         .team-members {
             display: flex;
             justify-content: center;
-            gap: 40px;
-            margin-top: 30px;
+            gap: 20px; /* Reduced gap */
+            margin-top: 20px; /* Reduced margin */
         }
+
         .team-member {
             text-align: center;
         }
+
         .team-member img {
-            width: 150px;
-            height: 150px;
+            width: 120px; /* Reduced size */
+            height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
         }
+
         .team-member h4 {
-            margin-top: 15px;
+            margin-top: 10px; /* Reduced margin */
             font-weight: 600;
+            font-size: 16px; /* Slightly smaller font */
             color: #E75480;
         }
+
         .team-member p {
             font-weight: bold;
             color: #777;
+            font-size: 14px; /* Slightly smaller font */
         }
     </style>
 </head>
 <body>
-
 
 <section class="about-content">
     <h2 class="section-title">About Our Website</h2>
