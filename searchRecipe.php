@@ -39,7 +39,8 @@ if (isset($_GET['query'])) {
     $searchQuery = trim($_GET['query']);
 
     // Fetch recipes based on search query (case-insensitive)
-    $sql = "SELECT r.recipeID, r.recipeImg, r.recipeName, d.mealDiff, u.userName 
+    $sql = "SELECT r.recipeID, r.recipeImg, r.recipeName, d.mealDiff, u.userName, 
+            (SELECT COUNT(*) FROM favorite f WHERE f.recipeID = r.recipeID AND f.userID = ?) AS isFavorited 
             FROM recipe r
             JOIN registered_user u ON r.userID = u.userID
             JOIN meal_difficulty d ON r.diffID = d.diffID
@@ -48,7 +49,7 @@ if (isset($_GET['query'])) {
 
     $stmt = $conn->prepare($sql);
     $searchPattern = "%" . $searchQuery . "%";
-    $stmt->bind_param("s", $searchPattern);
+    $stmt->bind_param("is", $userID, $searchPattern);
     $stmt->execute();
     $result = $stmt->get_result();
 }
@@ -135,6 +136,17 @@ if (isset($_GET['query'])) {
             font-weight: 600;
             margin-bottom: 5px;
         }
+        .recipe-title a {
+            color: inherit !important;  /* Use the parent text color */
+            text-decoration: none !important;  /* Remove underline */
+            font-weight: bold; /* Keep it noticeable */
+        }
+
+        .recipe-title a:hover {
+            color: #D81B60 !important; /* Slightly different color on hover */
+            text-decoration: none !important;
+        }
+
         .recipe-meta {
             font-size: 14px;
             color: gray;
@@ -162,22 +174,41 @@ if (isset($_GET['query'])) {
 
     <!-- Recipe List -->
     <section class="recipes-container">
-        <?php if ($result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <a href="user_recipe_details.php?id=<?= $row['recipeID'] ?>" class="recipe-card">
-                    <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
-                    <div class="recipe-content">
-                        <h3 class="recipe-title"> <?= htmlspecialchars($row['recipeName']) ?> </h3>
-                        <p class="recipe-meta"><?= htmlspecialchars($row['userName']) ?> • <?= htmlspecialchars($row['mealDiff']) ?></p>
-                        <i class="fas fa-star fav-icon <?= $isLoggedIn ? '' : 'fav-icon-gray' ?>"></i>
-                    </div>
-                </a>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <p style="text-align: center; font-size: 18px; color: #888; width: 100%;">No recipes found.</p>
-        <?php endif; ?>
-    </section>
+    <?php if ($result->num_rows > 0): ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
+        <div class="recipe-card">
+            <!-- Clickable Recipe Image -->
+            <a href="user_recipe_details.php?id=<?= $row['recipeID'] ?>">
+                <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
+            </a>
+            <div class="recipe-content">
+                <!-- Recipe Title (Clickable, but Styled as Normal Text) -->
+                <h3 class="recipe-title">
+                    <a href="user_recipe_details.php?id=<?= $row['recipeID'] ?>">
+                        <?= htmlspecialchars($row['recipeName']) ?>
+                    </a>
+                </h3>
+                <p class="recipe-meta"><?= htmlspecialchars($row['userName']) ?> • <?= htmlspecialchars($row['mealDiff']) ?></p>
 
+                <!-- Favorite Button -->
+                <button type="button" class="fav-btn" data-recipe-id="<?= $row['recipeID'] ?>">
+                    <i class="fas fa-heart <?= $row['isFavorited'] ? 'fav-icon' : 'fav-icon-gray' ?>"></i>
+                </button>
+            </div>
+        </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p style="text-align: center; font-size: 18px; color: #888; width: 100%;">No recipes found.</p>
+    <?php endif; ?>
+</section>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="favoriteToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessageContent"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
     <script>
         function searchRecipe() {
             let query = document.querySelector('.search-box input').value.trim();
@@ -185,6 +216,32 @@ if (isset($_GET['query'])) {
                 window.location.href = 'searchrecipe.php?query=' + encodeURIComponent(query);
             }
         }
+        $(document).ready(function () {
+        $(".fav-btn").click(function () {
+            let btn = $(this);
+            let recipeID = btn.data("recipe-id");
+
+            $.ajax({
+                url: "toggle_favorite.php",
+                type: "POST",
+                data: { recipeID: recipeID },
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === "added") {
+                        btn.find("i").removeClass("fav-icon-gray").addClass("fav-icon");
+                    } else if (response.status === "removed") {
+                        btn.find("i").removeClass("fav-icon").addClass("fav-icon-gray");
+                    }
+
+                    // Show toast notification
+                    $("#toastMessageContent").text(response.message);
+                    $("#favoriteToast").removeClass("bg-success bg-danger").addClass(response.toastClass);
+                    var toast = new bootstrap.Toast(document.getElementById("favoriteToast"));
+                    toast.show();
+                }
+            });
+        });
+    });
     </script>
 
 </body>
