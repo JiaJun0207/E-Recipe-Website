@@ -38,7 +38,25 @@ session_start();
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* Background Image */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('assets/pic/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(8px); /* Apply blur effect */
+            z-index: -1; /* Ensure it stays behind other elements */
         }
         .toast-container {
             position: fixed;
@@ -59,6 +77,7 @@ session_start();
     </style>
 </head>
 <body>
+<div class="background-container"></div>
     <div class="container">
         <div class="left-panel">
             <img src="assets/pic/LoginSignup.png" alt="Log In Image">
