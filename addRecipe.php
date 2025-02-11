@@ -12,9 +12,10 @@ if (!isset($_SESSION['userID'])) {
 }
 
 $userID = $_SESSION['userID']; // Get logged-in user ID
+$userStatus = ""; // Initialize user status
 
-// Fetch user details for header display
-$query = "SELECT userImg, userName FROM registered_user WHERE userID = ?";
+// Fetch user details including status
+$query = "SELECT userImg, userName, userStatus FROM registered_user WHERE userID = ?";
 $stmt = $conn->prepare($query);
 
 if ($stmt) {
@@ -25,9 +26,16 @@ if ($stmt) {
             $userData = $result->fetch_assoc();
             $userImg = $userData['userImg'];
             $userName = $userData['userName'];
+            $userStatus = $userData['userStatus'];
         }
     }
     $stmt->close();
+}
+
+// If user is Banned, show alert and redirect
+if ($userStatus === "Banned") {
+    echo "<script>alert('You are unable to add a recipe.'); window.location.href='eRecipeList.php';</script>";
+    exit();
 }
 
 // Fetch difficulty levels
@@ -39,6 +47,12 @@ $typeQuery = "SELECT * FROM meal_type";
 $typeResult = mysqli_query($conn, $typeQuery);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Check again in case the user bypassed frontend restrictions
+    if ($userStatus === "Banned") {
+        echo "<script>alert('You are unable to add a recipe.'); window.location.href='eRecipeList.php';</script>";
+        exit();
+    }
+
     $recipeName = $_POST['recipeName'];
     $recipeIngred = $_POST['recipeIngred'];
     $recipeDesc = $_POST['recipeDesc'];
@@ -77,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Insert Data into Database
         $sql = "INSERT INTO recipe (recipeImg, recipeName, recipeIngred, recipeDesc, recipeStatus, userID, diffID, typeID)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("sssssiis", $target_file, $recipeName, $recipeIngred, $recipeDesc, $recipeStatus, $userID, $diffID, $typeID);
 
@@ -126,16 +140,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #E75480;
             font-weight: 600;
         }
-        label {
-            font-weight: 500;
-            margin-top: 10px;
-        }
-        .form-control {
-            border-radius: 8px;
-        }
-        .form-select {
-            border-radius: 8px;
-        }
         .btn-custom {
             background-color: #E75480;
             color: white;
@@ -160,17 +164,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .back-btn i {
             margin-right: 5px;
         }
-        .image-preview {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
 <?php include('header.php'); ?>
+
     <div class="container">
         <h2>Add a New Recipe</h2>
         <form action="addRecipe.php" method="post" enctype="multipart/form-data">
@@ -184,44 +182,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <textarea name="recipeDesc" class="form-control" required></textarea>
 
             <label>Recipe Image:</label>
-            <input type="file" name="recipeImg" class="form-control" accept="image/*" required onchange="previewImage(event)">
-            <img id="preview" class="image-preview" src="" alt="Image Preview" style="display: none;">
+            <input type="file" name="recipeImg" class="form-control" accept="image/*" required>
 
-            <label>Difficulty Level:</label>
-            <select name="diffID" class="form-select" required>
-                <option value="">Select Difficulty</option>
-                <?php while ($diff = mysqli_fetch_assoc($diffResult)) { ?>
-                    <option value="<?= $diff['diffID'] ?>"><?= $diff['mealDiff'] ?></option>
-                <?php } ?>
-            </select>
-
-            <label>Recipe Type:</label>
-            <select name="typeID" class="form-select" required>
-                <option value="">Select Type</option>
-                <?php while ($type = mysqli_fetch_assoc($typeResult)) { ?>
-                    <option value="<?= $type['typeID'] ?>"><?= $type['mealType'] ?></option>
-                <?php } ?>
-            </select>
-
-            <input type="hidden" name="userID" value="<?= $userID ?>"> 
-            
             <button type="submit" class="btn btn-custom">Add Recipe</button>
         </form>
-        
+
         <a href="eRecipeList.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back to All Recipes</a>
     </div>
-
-    <script>
-        function previewImage(event) {
-            var reader = new FileReader();
-            reader.onload = function () {
-                var output = document.getElementById('preview');
-                output.src = reader.result;
-                output.style.display = "block";
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        }
-    </script>
 
 </body>
 </html>

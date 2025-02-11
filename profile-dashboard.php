@@ -11,13 +11,14 @@ if (!isset($_SESSION['userID'])) {
     $userName = 'Guest';
     $userEmail = '';
     $userBio = '';
+    $userStatus = '';
     $userNotLoggedIn = true; // Set flag to show pop-up
 } else {
     $userID = $_SESSION['userID'];
     $userNotLoggedIn = false; // Allow page to load normally
 
     // Fetch user details
-    $query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
+    $query = "SELECT userImg, userName, userEmail, userBio, userStatus FROM registered_user WHERE userID = ?";
     $stmt = $conn->prepare($query);
     
     if ($stmt) {
@@ -30,6 +31,7 @@ if (!isset($_SESSION['userID'])) {
                 $userName = $userData['userName'];
                 $userEmail = $userData['userEmail'];
                 $userBio = $userData['userBio'];
+                $userStatus = $userData['userStatus'];
             }
         }
         $stmt->close();
@@ -42,7 +44,6 @@ if (!isset($_SESSION['userID'])) {
                 JOIN registered_user u ON r.userID = u.userID
                 WHERE f.userID = ? 
                 ORDER BY r.recipeDate DESC";
-
 
     $favStmt = $conn->prepare($favQuery);
     if ($favStmt) {
@@ -200,7 +201,7 @@ if (!isset($_SESSION['userID'])) {
         <a href="profile.php"><i class="fas fa-user"></i> Account Details</a>
         <a href="change-password.php"><i class="fas fa-lock"></i> Change Password</a>
         <a href="user_recipe.php"><i class="fas fa-utensils"></i> My Recipes</a>
-        <a href="addRecipe.php"><i class="fas fa-plus-circle"></i> Submit Recipe</a> <!-- ✅ New Link -->
+        <a href="addRecipe.php"><i class="fas fa-plus-circle"></i> Submit Recipe</a>
         <a href="logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
     <div class="content">
@@ -210,6 +211,11 @@ if (!isset($_SESSION['userID'])) {
             <label class="form-label">Bio:</label>
             <textarea class="form-control" disabled><?php echo htmlspecialchars($userBio); ?></textarea>
         </div>
+        <div class="mb-3">
+            <label class="form-label">Status:</label>
+            <input type="text" class="form-control" value="<?php echo htmlspecialchars($userStatus); ?>" disabled>
+        </div>
+        
         <h3>My Favorite Recipes</h3>
         <div class="recipes">
             <?php if ($favResult->num_rows > 0): ?>
