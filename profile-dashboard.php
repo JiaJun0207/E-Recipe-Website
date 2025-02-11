@@ -37,11 +37,12 @@ if (!isset($_SESSION['userID'])) {
 
     // Fetch favorite recipes with creator info
     $favQuery = "SELECT r.recipeID, r.recipeImg, r.recipeName, r.recipeDate, u.userName AS creatorName 
-                 FROM favourite f
-                 JOIN recipe r ON f.recipeID = r.recipeID
-                 JOIN registered_user u ON r.userID = u.userID
-                 WHERE f.userID = ? 
-                 ORDER BY r.recipeDate DESC";
+                FROM favorite f
+                JOIN recipe r ON f.recipeID = r.recipeID
+                JOIN registered_user u ON r.userID = u.userID
+                WHERE f.userID = ? 
+                ORDER BY r.recipeDate DESC";
+
 
     $favStmt = $conn->prepare($favQuery);
     if ($favStmt) {
@@ -208,6 +209,27 @@ if (!isset($_SESSION['userID'])) {
         <div class="mb-3">
             <label class="form-label">Bio:</label>
             <textarea class="form-control" disabled><?php echo htmlspecialchars($userBio); ?></textarea>
+        </div>
+        <h3>My Favorite Recipes</h3>
+        <div class="recipes">
+            <?php if ($favResult->num_rows > 0): ?>
+                <?php while ($row = $favResult->fetch_assoc()): ?>
+                    <div class="recipe-card">
+                        <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
+                        <div class="recipe-content">
+                            <h4 class="recipe-title">
+                                <a href="user_recipe_details.php?id=<?= $row['recipeID'] ?>">
+                                    <?= htmlspecialchars($row['recipeName']) ?>
+                                </a>
+                            </h4>
+                            <p class="recipe-meta">Created by: <?= htmlspecialchars($row['creatorName']) ?></p>
+                            <p class="recipe-meta">Added on: <?= htmlspecialchars(date("d M Y, H:i", strtotime($row['recipeDate']))) ?></p>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p>No favorite recipes added yet.</p>
+            <?php endif; ?>
         </div>
     </div>
 </div>
