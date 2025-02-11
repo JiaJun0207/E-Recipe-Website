@@ -44,6 +44,28 @@ use PHPMailer\PHPMailer\Exception;
         }
     </script>
     <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* Background Image */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('assets/pic/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(8px); /* Apply blur effect */
+            z-index: -1; /* Ensure it stays behind other elements */
+        }
         .toast-container {
             position: fixed;
             bottom: 20px;
