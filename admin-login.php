@@ -167,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["admin_login"])) {
             <button type="submit" name="admin_login"><strong>Log In</strong></button>
         </form>
         <?php if (!empty($error)) echo "<p class='error'><strong>$error</strong></p>"; ?>
-        <p class="back-link"><a href="login.php"><strong>Back to User Login</strong></a></p>
+        <p class="back-link"><a href="index.php"><strong>Back to User Login</strong></a></p>
     </div>
 </div>
 

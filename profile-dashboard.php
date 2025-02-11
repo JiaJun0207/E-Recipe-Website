@@ -69,6 +69,10 @@ if (!isset($_SESSION['userID'])) {
             font-family: 'Poppins', sans-serif;
             background-color: #f9f9f9;
         }
+        .active-link {
+            color: #E75480 !important;
+            font-weight: bold;
+        }
         .profile-container {
             display: flex;
             max-width: 1200px;
@@ -195,6 +199,7 @@ if (!isset($_SESSION['userID'])) {
         <a href="profile.php"><i class="fas fa-user"></i> Account Details</a>
         <a href="change-password.php"><i class="fas fa-lock"></i> Change Password</a>
         <a href="user_recipe.php"><i class="fas fa-utensils"></i> My Recipes</a>
+        <a href="addRecipe.php"><i class="fas fa-plus-circle"></i> Submit Recipe</a> <!-- ✅ New Link -->
         <a href="logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
     <div class="content">
@@ -203,28 +208,6 @@ if (!isset($_SESSION['userID'])) {
         <div class="mb-3">
             <label class="form-label">Bio:</label>
             <textarea class="form-control" disabled><?php echo htmlspecialchars($userBio); ?></textarea>
-        </div>
-        
-        <h3>My Favorite Recipes</h3>
-        <div class="recipes">
-            <?php if ($favResult->num_rows > 0): ?>
-                <?php while ($row = $favResult->fetch_assoc()): ?>
-                    <div class="recipe-card">
-                        <img src="<?= htmlspecialchars($row['recipeImg']) ?>" alt="<?= htmlspecialchars($row['recipeName']) ?>">
-                        <div class="recipe-content">
-                            <h4 class="recipe-title">
-                                <a href="user_recipe_details.php?id=<?= $row['recipeID'] ?>">
-                                    <?= htmlspecialchars($row['recipeName']) ?>
-                                </a>
-                            </h4>
-                            <p class="recipe-meta">Created by: <?= htmlspecialchars($row['creatorName']) ?></p>
-                            <p class="recipe-meta">Added on: <?= htmlspecialchars(date("d M Y, H:i", strtotime($row['recipeDate']))) ?></p>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <p>No favorite recipes added yet.</p>
-            <?php endif; ?>
         </div>
     </div>
 </div>

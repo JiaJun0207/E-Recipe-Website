@@ -142,13 +142,7 @@ CREATE TABLE `rating` (
     ratingText VARCHAR(50) NOT NULL
   PRIMARY KEY (`ratingID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-INSERT INTO `rating` (`ratingNum`, `ratingText`) VALUES
-(1, 'Poor'),
-(2, 'Fair'),
-(3, 'Good'),
-(4, 'Very Good'),
-(5, 'Excellent');
+>>>>>>> 8f8f97da3b49ed7fe6465820d6dcd9e7ac1a53ba
 
 -- --------------------------------------------------------
 
