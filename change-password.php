@@ -183,6 +183,7 @@ if ($stmt) {
         <a href="profile.php"><i class="fas fa-user"></i> Account Details</a>
         <a href="change-password.php" class="active-link"><i class="fas fa-lock"></i> Change Password</a>
         <a href="user_recipe.php"><i class="fas fa-utensils"></i> My Recipes</a>
+        <a href="addRecipe.php"><i class="fas fa-plus-circle"></i> Submit Recipe</a>
         <a href="logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
     <div class="content">
