@@ -137,9 +137,12 @@ INSERT INTO `meal_type` (`typeID`, `mealType`) VALUES
 --
 
 CREATE TABLE `rating` (
-  `ratingID` int(11) NOT NULL,
-  `ratingNum` int(11) NOT NULL
+    ratingID INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    ratingNum INT(11) NOT NULL,
+    ratingText VARCHAR(50) NOT NULL
+  PRIMARY KEY (`ratingID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+>>>>>>> 8f8f97da3b49ed7fe6465820d6dcd9e7ac1a53ba
 
 -- --------------------------------------------------------
 
