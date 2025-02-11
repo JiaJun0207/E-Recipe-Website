@@ -192,6 +192,10 @@ $commentsResult = $commentsStmt->get_result()
         .toast.error {
             background: #dc3545;
         }
+        .ingredients-list p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -205,15 +209,16 @@ $commentsResult = $commentsStmt->get_result()
     <p><strong>Author:</strong> <?= htmlspecialchars($recipe['userName']) ?></p>
     <p><strong>Difficulty:</strong> <?= htmlspecialchars($recipe['mealDiff']) ?></p>
     <p><strong>Meal Type:</strong> <?= htmlspecialchars($recipe['mealType']) ?></p>
-    <p><strong>Ingredients:</strong></p>
-        <ul>
-            <?php 
-            $ingredients = explode("\n", $recipe['recipeIngred']); // Split ingredients into a list
-            foreach ($ingredients as $ingredient): ?>
-                <li><?= htmlspecialchars($ingredient) ?></li>
-            <?php endforeach; ?>
-        </ul>
     <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($recipe['recipeDesc'])) ?></p>
+    <p><strong>Ingredients:</strong></p>
+        <div class="ingredients-list">
+            <?php 
+            $ingredients = explode("\n", $recipe['recipeIngred']); // Split ingredients into lines
+            foreach ($ingredients as $ingredient): ?>
+            <p><?= htmlspecialchars($ingredient) ?></p>
+            <?php endforeach; ?>
+        </div>
+    <br>
     <!-- Favorite Button -->
     <form id="favoriteForm">
         <input type="hidden" name="recipeID" value="<?= $recipeID ?>">

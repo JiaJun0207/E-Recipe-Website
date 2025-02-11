@@ -182,13 +182,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <textarea name="recipeDesc" class="form-control" required></textarea>
 
             <label>Recipe Image:</label>
-            <input type="file" name="recipeImg" class="form-control" accept="image/*" required>
+            <input type="file" name="recipeImg" class="form-control" accept="image/*" required onchange="previewImage(event)">
+            <img id="preview" class="image-preview" src="" alt="Image Preview" style="display: none;">
+
+            <label>Difficulty Level:</label>
+            <select name="diffID" class="form-select" required>
+                <option value="">Select Difficulty</option>
+                <?php while ($diff = mysqli_fetch_assoc($diffResult)) { ?>
+                    <option value="<?= $diff['diffID'] ?>"><?= $diff['mealDiff'] ?></option>
+                <?php } ?>
+            </select>
+
+            <label>Recipe Type:</label>
+            <select name="typeID" class="form-select" required>
+                <option value="">Select Type</option>
+                <?php while ($type = mysqli_fetch_assoc($typeResult)) { ?>
+                    <option value="<?= $type['typeID'] ?>"><?= $type['mealType'] ?></option>
+                <?php } ?>
+            </select>
+
+            <input type="hidden" name="userID" value="<?= $userID ?>"> 
 
             <button type="submit" class="btn btn-custom">Add Recipe</button>
         </form>
 
         <a href="eRecipeList.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back to All Recipes</a>
     </div>
-
+    <script>
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('preview');
+                output.src = reader.result;
+                output.style.display = "block";
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
 </body>
 </html>
