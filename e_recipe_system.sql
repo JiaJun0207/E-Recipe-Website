@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 10, 2025 at 01:16 PM
--- Server version: 10.4.25-MariaDB
--- PHP Version: 8.1.10
+-- Generation Time: Feb 11, 2025 at 08:16 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,7 +31,7 @@ CREATE TABLE `admin` (
   `adminID` int(11) NOT NULL,
   `adminName` varchar(255) NOT NULL,
   `adminPass` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admin`
@@ -45,6 +45,19 @@ INSERT INTO `admin` (`adminID`, `adminName`, `adminPass`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `favorite`
+--
+
+CREATE TABLE `favorite` (
+  `favID` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
+  `recipeID` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `favourite`
 --
 
@@ -52,7 +65,7 @@ CREATE TABLE `favourite` (
   `favID` int(11) NOT NULL,
   `userID` int(11) DEFAULT NULL,
   `recipeID` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `favourite`
@@ -77,7 +90,7 @@ CREATE TABLE `feedback` (
   `ratingID` int(11) DEFAULT NULL,
   `comment` text DEFAULT NULL,
   `feedbackDate` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `feedback`
@@ -86,7 +99,8 @@ CREATE TABLE `feedback` (
 INSERT INTO `feedback` (`feedbackID`, `userID`, `recipeID`, `ratingID`, `comment`, `feedbackDate`) VALUES
 (1, 1, 1, 1, 'Delicious and easy to make!', '2025-02-08 08:15:34'),
 (3, 3, 3, 3, 'Grilled chicken came out juicy and flavorful.', '2025-02-08 08:15:34'),
-(4, 4, 4, 4, 'Loved this cake! Perfect texture and taste.', '2025-02-08 08:15:34');
+(4, 4, 4, 4, 'Loved this cake! Perfect texture and taste.', '2025-02-08 08:15:34'),
+(25, 7, 1, 4, 'try it', '2025-02-11 06:52:43');
 
 -- --------------------------------------------------------
 
@@ -97,7 +111,7 @@ INSERT INTO `feedback` (`feedbackID`, `userID`, `recipeID`, `ratingID`, `comment
 CREATE TABLE `meal_difficulty` (
   `diffID` int(11) NOT NULL,
   `mealDiff` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `meal_difficulty`
@@ -117,7 +131,7 @@ INSERT INTO `meal_difficulty` (`diffID`, `mealDiff`) VALUES
 CREATE TABLE `meal_type` (
   `typeID` int(11) NOT NULL,
   `mealType` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `meal_type`
@@ -137,12 +151,21 @@ INSERT INTO `meal_type` (`typeID`, `mealType`) VALUES
 --
 
 CREATE TABLE `rating` (
-    ratingID INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    ratingNum INT(11) NOT NULL,
-    ratingText VARCHAR(50) NOT NULL
-  PRIMARY KEY (`ratingID`)
+  `ratingID` int(11) NOT NULL,
+  `ratingNum` int(11) NOT NULL,
+  `ratingText` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
->>>>>>> 8f8f97da3b49ed7fe6465820d6dcd9e7ac1a53ba
+
+--
+-- Dumping data for table `rating`
+--
+
+INSERT INTO `rating` (`ratingID`, `ratingNum`, `ratingText`) VALUES
+(1, 1, 'Poor'),
+(2, 2, 'Fair'),
+(3, 3, 'Good'),
+(4, 4, 'Very Good'),
+(5, 5, 'Excellent');
 
 -- --------------------------------------------------------
 
@@ -162,7 +185,7 @@ CREATE TABLE `recipe` (
   `userID` int(11) DEFAULT NULL,
   `diffID` int(11) DEFAULT NULL,
   `typeID` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `recipe`
@@ -191,7 +214,7 @@ CREATE TABLE `registered_user` (
   `userBio` text DEFAULT NULL,
   `favID` int(11) DEFAULT NULL,
   `reset_token` varchar(255) DEFAULT NULL,
-  `userStatus` ENUM('Active', 'Inactive', 'Banned') NOT NULL DEFAULT 'Active'
+  `userStatus` enum('Active','Inactive','Banned') NOT NULL DEFAULT 'Active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -203,7 +226,8 @@ INSERT INTO `registered_user` (`userID`, `userImg`, `userName`, `userEmail`, `us
 (2, NULL, 'Alice Smith', 'alice.smith@example.com', '$2y$10$ZTTrXsFmsYVp9eXGXBqxw.zV5XJGvH1lM7Gk.V23mFOzvl3Po9OGi', 'Pastry chef', NULL, NULL, 'Active'),
 (3, NULL, 'Bob Brown', 'bob.brown@example.com', '$2y$10$fwC5cm9TYi3bROH9Cl5hZeqFTquTR2yk9nS5hMxfpaU9DdHbG4pmC', 'BBQ expert', NULL, NULL, 'Active'),
 (4, NULL, 'Emily White', 'emily.white@example.com', '$2y$10$6A0/bD7cd1LP6rVdXoONQO5zZf1AYMSL/xPtM8lGf59mSm4ayHeTC', 'Vegan food lover', NULL, NULL, 'Active'),
-(6, 'uploads/ikun.jpeg', 'kunkun', 'yongqi218@gmail.com', '$2y$10$J7HoVucKMA9hZwyZUNkMtOofcSCJkUpFCKkj0ZiB82AAcUfVrZAji', 'kunkun', NULL, NULL, 'Active');
+(6, 'uploads/ikun.jpeg', 'kunkun', 'yongqi218@gmail.com', '$2y$10$J7HoVucKMA9hZwyZUNkMtOofcSCJkUpFCKkj0ZiB82AAcUfVrZAji', 'kunkun', NULL, NULL, 'Active'),
+(7, 'uploads/2b1502f45463fbad7fde27fa54a59912.jpg', 'JiaJun', 'chanjiajun321@gmail.com', '$2y$10$9g0odYbX4/QpfqU0OX7ZoOuvNJYdtLcarSM7IO7Fotdkunjt.tK4u', '这家伙很懒什么也没留下~', NULL, NULL, 'Active');
 
 --
 -- Indexes for dumped tables
@@ -214,6 +238,14 @@ INSERT INTO `registered_user` (`userID`, `userImg`, `userName`, `userEmail`, `us
 --
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`adminID`);
+
+--
+-- Indexes for table `favorite`
+--
+ALTER TABLE `favorite`
+  ADD PRIMARY KEY (`favID`),
+  ADD KEY `userID` (`userID`),
+  ADD KEY `recipeID` (`recipeID`);
 
 --
 -- Indexes for table `favourite`
@@ -268,6 +300,12 @@ ALTER TABLE `admin`
   MODIFY `adminID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `favorite`
+--
+ALTER TABLE `favorite`
+  MODIFY `favID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
 -- AUTO_INCREMENT for table `favourite`
 --
 ALTER TABLE `favourite`
@@ -277,7 +315,7 @@ ALTER TABLE `favourite`
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `feedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `feedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `meal_difficulty`
@@ -295,7 +333,7 @@ ALTER TABLE `meal_type`
 -- AUTO_INCREMENT for table `rating`
 --
 ALTER TABLE `rating`
-  MODIFY `ratingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ratingID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `recipe`
@@ -307,7 +345,18 @@ ALTER TABLE `recipe`
 -- AUTO_INCREMENT for table `registered_user`
 --
 ALTER TABLE `registered_user`
-  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `favorite`
+--
+ALTER TABLE `favorite`
+  ADD CONSTRAINT `favorite_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `registered_user` (`userID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `favorite_ibfk_2` FOREIGN KEY (`recipeID`) REFERENCES `recipe` (`recipeID`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
