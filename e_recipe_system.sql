@@ -96,8 +96,10 @@ CREATE TABLE `meal_type` (
 --
 
 CREATE TABLE `rating` (
-  `ratingID` int(11) NOT NULL,
-  `ratingNum` int(11) NOT NULL
+  `ratingID` int(11) NOT NULL AUTO_INCREMENT,
+  `ratingNum` int(11) NOT NULL,
+  `ratingText` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`ratingID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
