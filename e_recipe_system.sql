@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 11, 2025 at 08:58 AM
+-- Generation Time: Feb 11, 2025 at 09:18 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -60,29 +60,8 @@ CREATE TABLE `favorite` (
 --
 
 INSERT INTO `favorite` (`favID`, `userID`, `recipeID`, `created_at`) VALUES
-(18, 7, 1, '2025-02-11 07:30:02');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `favourite`
---
-
-CREATE TABLE `favourite` (
-  `favID` int(11) NOT NULL,
-  `userID` int(11) DEFAULT NULL,
-  `recipeID` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `favourite`
---
-
-INSERT INTO `favourite` (`favID`, `userID`, `recipeID`) VALUES
-(1, 1, 2),
-(2, 2, 4),
-(3, 3, 1),
-(4, 4, 3);
+(18, 7, 1, '2025-02-11 07:30:02'),
+(19, 7, 7, '2025-02-11 08:17:22');
 
 -- --------------------------------------------------------
 
@@ -107,7 +86,8 @@ INSERT INTO `feedback` (`feedbackID`, `userID`, `recipeID`, `ratingID`, `comment
 (1, 1, 1, 1, 'Delicious and easy to make!', '2025-02-08 08:15:34'),
 (3, 3, 3, 3, 'Grilled chicken came out juicy and flavorful.', '2025-02-08 08:15:34'),
 (4, 4, 4, 4, 'Loved this cake! Perfect texture and taste.', '2025-02-08 08:15:34'),
-(25, 7, 1, 4, 'try it', '2025-02-11 06:52:43');
+(25, 7, 1, 4, 'try it', '2025-02-11 06:52:43'),
+(26, 7, 8, 3, 'nice!', '2025-02-11 08:03:30');
 
 -- --------------------------------------------------------
 
@@ -205,7 +185,7 @@ INSERT INTO `recipe` (`recipeID`, `recipeImg`, `recipeName`, `recipeIngred`, `re
 (4, NULL, 'Chocolate Cake', 'Flour, Cocoa Powder, Sugar, Eggs, Butter', 'Mix ingredients, bake at 180°C for 30 min.', '2025-02-08 08:15:34', 'Rejected', NULL, 4, 3, 4),
 (5, 'uploads/67a72e862b45a_1739009670.png', 'testing testing 123', '1 chicken', 'iuzgvahsedifnszd', '2025-02-08 10:14:30', 'Pending', NULL, 6, 3, 5),
 (6, 'uploads/67a730e13ccf3_1739010273.jpg', '66666', '66666', '666666', '2025-02-08 10:24:33', 'Pending', NULL, 6, 2, 5),
-(7, 'uploads/67aafd6043af1_1739259232.jpg', 'Simple Green Salad', 'balsamic vinegar\r\nolive oil\r\nmaple syrup\r\ngarlic powder\r\nsalt + pepp', 'Every table needs this Simple Green Salad! Fresh spring greens drizzled with a maple balsamic dressing and sprinkled with whatever crunchies your salad-loving heart desires.\r\nSince we really cannot take any credit for the spring greens, they’re just doing their thing, let’s talk about this dressing. It’s got all the elements you need to really make it feel special even though it could not be easier and it’s just a few jar-shakes away from being yours all day every day. Deep rich balsamic, a hint of maple sweetness, a subtle little garlic bite. Just get everything together in a jar and then that magnificence is going to be at the ready for you in your fridge all week long.', '2025-02-11 07:33:52', 'Re-Submitted', NULL, 7, 1, 2),
+(7, 'uploads/67aafd6043af1_1739259232.jpg', 'Simple Green Salad', 'balsamic vinegar\r\nolive oil\r\nmaple syrup\r\ngarlic powder\r\nsalt + pepp', 'Every table needs this Simple Green Salad! Fresh spring greens drizzled with a maple balsamic dressing and sprinkled with whatever crunchies your salad-loving heart desires.\r\nSince we really cannot take any credit for the spring greens, they’re just doing their thing, let’s talk about this dressing. It’s got all the elements you need to really make it feel special even though it could not be easier and it’s just a few jar-shakes away from being yours all day every day. Deep rich balsamic, a hint of maple sweetness, a subtle little garlic bite. Just get everything together in a jar and then that magnificence is going to be at the ready for you in your fridge all week long.', '2025-02-11 07:33:52', 'Approved', NULL, 7, 1, 2),
 (8, 'uploads/67aaff1e1fd62_1739259678.jpg', 'Tiramisu', 'Espresso \r\nDark rum \r\nMascarpone\r\nZabaglione\r\nSugar\r\nCream \r\nVanilla extract \r\nLadyfingers ', 'Tiramisu is a classic Italian dessert of ladyfingers soaked in bold espresso and rum, enveloped in layers of thick, velvety mascarpone and custard cream. It is simply decadent, and oh-so elegant. The complex flavor of tiramisu is a product of the delicate soaked ladyfingers and luscious cream layer. The cream layer is composed of mascarpone, rum, vanilla-scented whipped cream, and custard. A classic tiramisu recipe calls for raw egg yolks. Since I know some are hesitant to eat raw eggs, I lightly and carefully cook the custard (also called zabaglione) until thick and creamy, keeping my recipe true to the classic flavor and using Italian pastry methods.\r\nFor a gorgeous presentation, be sure to make the tiramisu recipe a night in advance, as it needs several hours to set properly. A chilled tiramisu slices like a dream into neat squares! And if you’re looking for more no-bake desserts, then try my éclair cake recipe, Nanaimo bars recipe, or easy Oreo pie!\r\n1. Combine the espresso and dark rum in a medium bowl.\r\n\r\n2. To a large bowl, add the mascarpone cheese along with the remaining rum. Whisk together or beat with a hand mixer. Set aside for now.\r\n3. Make the custard (you’re basically making a zabaglione here). If you have a double-boiler, combine the egg yolks and granulated sugar in the top. If not, whisk them together in a heat-proof medium mixing bowl. Place the bowl over a pot of simmering water, ensuring that the bowl doesn’t touch the water. Continue to whisk until the sugar has dissolved. Once the egg yolk mixture is pale yellow and thickened, it is ready. This will take 5 to 8 minutes.\r\n\r\n4. Pour the egg yolk mixture into the mascarpone and whisk until combined. Refrigerate for 15 minutes.\r\n5. Combine the heavy cream and vanilla in a large mixing with an electric mixer or the bowl of a stand mixer fitted with the whisk attachment. Beat on medium until stiff peaks form (3 to 5 minutes). Keep an eye on the cream as if it is over-beaten, it will turn into butter! Fold the whipped cream into the cold mascarpone mixture.\r\n6. Prepare the ladyfingers by dipping each side briefly into the espresso and rum mixture. Each side only needs to be dipped for a second or two, otherwise, the cookies will absorb too much liquid and become soggy. Arrange the lady fingers in a single layer in a 9×13-inch dish. You may need to break one row of ladyfingers so they fit. Try not to leave any gaps.\r\n7. Add half the mascarpone mixture on top of the ladyfingers and smooth it out using a spatula. Dip more ladyfingers in the espresso mixture and arrange them in a layer on top of the mascarpone cream layer.\r\n\r\n8. Spoon the rest of the mascarpone mixture on top of the second layer of ladyfingers and smooth it out. So you will end up with a layer of ladyfingers at the bottom, then a layer of mascarpone cream, then another layer of cookies, and one more layer of mascarpone cream. Dust the tiramisu recipe generously with unsweetened cocoa powder and chill overnight. Allowing your tiramisu time to set will give you neat layers and make slicing it much easier.', '2025-02-11 07:41:18', 'Approved', NULL, 7, 3, 4);
 
 -- --------------------------------------------------------
@@ -258,12 +238,6 @@ ALTER TABLE `favorite`
   ADD KEY `recipeID` (`recipeID`);
 
 --
--- Indexes for table `favourite`
---
-ALTER TABLE `favourite`
-  ADD PRIMARY KEY (`favID`);
-
---
 -- Indexes for table `feedback`
 --
 ALTER TABLE `feedback`
@@ -313,19 +287,13 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `favorite`
 --
 ALTER TABLE `favorite`
-  MODIFY `favID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
-
---
--- AUTO_INCREMENT for table `favourite`
---
-ALTER TABLE `favourite`
-  MODIFY `favID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `favID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `feedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `feedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `meal_difficulty`

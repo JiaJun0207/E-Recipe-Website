@@ -4,12 +4,27 @@ session_start();
 include 'db.php';
 
 // Check if user is logged in
-if (!isset($_SESSION['userID'])) {
-    header("Location: index.php");
-    exit();
+if (isset($_SESSION['userID'])) {
+    $userID = $_SESSION['userID'];
+    
+    // Fetch user details
+    $query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
+    $stmt = $conn->prepare($query);
+    if ($stmt) {
+        $stmt->bind_param("i", $userID);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                $userData = $result->fetch_assoc();
+                $userImg = $userData['userImg'];
+                $userName = $userData['userName'];
+                $userEmail = $userData['userEmail'];
+                $userBio = $userData['userBio'];
+            }
+        }
+        $stmt->close();
+    }
 }
-
-$userID = $_SESSION['userID'];
 
 // Check if recipe ID is provided
 if (!isset($_GET['recipeID']) || empty($_GET['recipeID'])) {
@@ -70,33 +85,103 @@ $stmt->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Recipe</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .edit-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .btn-custom {
+            background-color: #ff4500;
+            color: white;
+            font-weight: bold;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            transition: 0.3s ease;
+        }
+        .btn-custom:hover {
+            background-color: #e03e00;
+        }
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+        .img-preview {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-
-<div class="container mt-4">
-    <h2>Edit Recipe</h2>
-    <form method="POST" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label class="form-label">Recipe Name</label>
-            <input type="text" name="recipeName" class="form-control" value="<?= htmlspecialchars($recipe['recipeName']) ?>" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Ingredients</label>
-            <textarea name="recipeIngred" class="form-control" rows="5" required><?= htmlspecialchars($recipe['recipeIngred']) ?></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea name="recipeDesc" class="form-control" rows="5" required><?= htmlspecialchars($recipe['recipeDesc']) ?></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Recipe Image</label>
-            <input type="file" name="recipeImg" class="form-control">
-            <img src="<?= htmlspecialchars($recipe['recipeImg']) ?>" width="100" class="mt-2">
-        </div>
-        <button type="submit" class="btn btn-success">Update Recipe</button>
-        <a href="user_recipe.php" class="btn btn-secondary">Cancel</a>
-    </form>
+<?php include('header.php'); ?>
+<div class="container">
+    <div class="edit-container">
+        <h2>Edit Your Recipe</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Recipe Name</label>
+                <input type="text" name="recipeName" class="form-control" value="<?= htmlspecialchars($recipe['recipeName']) ?>" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Ingredients</label>
+                <textarea name="recipeIngred" class="form-control" rows="5" required><?= htmlspecialchars($recipe['recipeIngred']) ?></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="recipeDesc" class="form-control" rows="5" required><?= htmlspecialchars($recipe['recipeDesc']) ?></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Recipe Image</label>
+                <input type="file" name="recipeImg" class="form-control" id="recipeImg">
+                <img id="previewImg" src="<?= htmlspecialchars($recipe['recipeImg']) ?>" class="img-preview">
+            </div>
+            <button type="submit" class="btn btn-custom">Update Recipe</button>
+            <a href="user_recipe.php" class="btn cancel-btn mt-2">Cancel</a>
+        </form>
+    </div>
 </div>
+
+<script>
+    document.getElementById("recipeImg").addEventListener("change", function(event) {
+        let reader = new FileReader();
+        reader.onload = function() {
+            let output = document.getElementById("previewImg");
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    });
+</script>
 
 </body>
 </html>
+
