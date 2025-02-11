@@ -160,6 +160,22 @@ if (!isset($_SESSION['userID'])) {
             font-size: 14px;
             color: gray;
         }
+        .status-container {
+            display: inline-block;
+            padding: 5px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 5px;
+            color: white;
+            min-width: 100px;
+        }
+        .status-active {
+            background-color: #28a745; /* Green */
+        }
+        .status-banned {
+            background-color: #dc3545; /* Red */
+        }
     </style>
 </head>
 <body>
@@ -213,8 +229,11 @@ if (!isset($_SESSION['userID'])) {
         </div>
         <div class="mb-3">
             <label class="form-label">Status:</label>
-            <input type="text" class="form-control" value="<?php echo htmlspecialchars($userStatus); ?>" disabled>
+            <div class="status-container <?php echo ($userStatus === 'Active') ? 'status-active' : 'status-banned'; ?>">
+                <?php echo htmlspecialchars($userStatus); ?>
+            </div>
         </div>
+
         
         <h3>My Favorite Recipes</h3>
         <div class="recipes">

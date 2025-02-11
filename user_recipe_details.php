@@ -98,7 +98,6 @@ ob_end_flush(); // ✅ End output buffering
         $isFavorited = $result->num_rows > 0;
     }
 
-
 // Fetch ratings
 $ratingQuery = "SELECT ratingID, ratingText FROM rating";
 $ratingResult = $conn->query($ratingQuery);
