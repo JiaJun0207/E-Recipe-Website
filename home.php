@@ -122,6 +122,13 @@ $result = $conn->query($sql);
         .recipe-card h5 {
             margin: 10px 0;
             font-size: 18px;
+            color: black !important;  /* Use the parent text color */
+            text-decoration: none !important;  /* Remove underline */
+            font-weight: bold; /* Keep it noticeable */
+        }
+        .recipe-card h5:hover {
+            color: #D81B60 !important; /* Slightly different color on hover */
+            text-decoration: none !important;
         }
 
         .favorite-count {
