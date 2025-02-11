@@ -1,23 +1,26 @@
 <?php
 session_start();
 include 'db.php';
+ob_start(); // ✅ Start output buffering
 
 // Default values
 $userImg = 'uploads/default.png'; 
 $userName = 'Guest';
+$userStatus = null; // ✅ Ensure userStatus is always defined
 $isLoggedIn = false;
 $userID = null;
 $toastMessage = '';
+
 if (isset($_SESSION['toastMessage'])) {
     $toastMessage = $_SESSION['toastMessage'];
-    unset($_SESSION['toastMessage']); // Clear the message after displaying
+    unset($_SESSION['toastMessage']); // Clear message after displaying
 }
 
 if (isset($_SESSION['userID'])) {
     $isLoggedIn = true;
     $userID = $_SESSION['userID'];
 
-    $query = "SELECT userImg, userName FROM registered_user WHERE userID = ?";
+    $query = "SELECT userImg, userName, userStatus FROM registered_user WHERE userID = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $userID);
     if ($stmt->execute()) {
@@ -26,28 +29,33 @@ if (isset($_SESSION['userID'])) {
             $userData = $result->fetch_assoc();
             $userImg = $userData['userImg'];
             $userName = $userData['userName'];
+            $userStatus = $userData['userStatus'];
         }
+    } else {
+        $userStatus = null;
     }
 }
 
 // Validate Recipe ID
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    $toastMessage = 'Invalid Recipe ID.';
+    $_SESSION['toastMessage'] = 'Invalid Recipe ID.';
 } else {
     $recipeID = $_GET['id'];
 
     // Handle comment submission
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
         if (!$isLoggedIn) {
-            $toastMessage = 'You must be logged in to leave a comment.';
+            $_SESSION['toastMessage'] = 'You must be logged in to leave a comment.';
+        } elseif ($userStatus === 'Banned') {
+            $_SESSION['toastMessage'] = 'You are banned and cannot leave comments.';
         } else {
             $comment = trim($_POST['comment']);
             $rating = $_POST['rating'];
-    
+
             if (!empty($comment)) {
                 $stmt = $conn->prepare("INSERT INTO feedback (userID, recipeID, ratingID, comment, feedbackDate) VALUES (?, ?, ?, ?, NOW())");
                 $stmt->bind_param("iiis", $userID, $recipeID, $rating, $comment);
-    
+
                 if ($stmt->execute()) {
                     $_SESSION['toastMessage'] = 'Your feedback has been submitted!';
                     header("Location: user_recipe_details.php?id=" . urlencode($recipeID));
@@ -56,6 +64,10 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
             }
         }
     }
+}
+
+ob_end_flush(); // ✅ End output buffering
+    
 
     // Fetch recipe details
     $query = "SELECT recipe.recipeID, recipe.recipeName, recipe.recipeImg, recipe.recipeIngred, recipe.recipeDesc, 
@@ -85,7 +97,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
         $result = $stmt->get_result();
         $isFavorited = $result->num_rows > 0;
     }
-}
+
 
 // Fetch ratings
 $ratingQuery = "SELECT ratingID, ratingText FROM rating";
@@ -100,8 +112,7 @@ $commentsQuery = "SELECT feedback.*, registered_user.userName, registered_user.u
 $commentsStmt = $conn->prepare($commentsQuery);
 $commentsStmt->bind_param("i", $recipeID);
 $commentsStmt->execute();
-$commentsResult = $commentsStmt->get_result();
-
+$commentsResult = $commentsStmt->get_result()
 
 ?>
 

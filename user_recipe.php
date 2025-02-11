@@ -9,34 +9,34 @@ include 'db.php';
 if (!isset($_SESSION['userID'])) {
     header("Location: index.php"); 
     exit();
-} else {
-    $userNotLoggedIn = false; // Allow page to load normally
+}
 
-    // Initialize variables for user data
-    $userImg = 'uploads/default.png';
-    $userName = 'Guest';
-    $userEmail = '';
-    $userBio = '';
+$userID = $_SESSION['userID'];
 
-    $userID = $_SESSION['userID'];
+// Initialize variables for user data
+$userImg = 'uploads/default.png';
+$userName = 'Guest';
+$userEmail = '';
+$userBio = '';
+$userStatus = '';
 
-    // Fetch user details
-    $query = "SELECT userImg, userName, userEmail, userBio FROM registered_user WHERE userID = ?";
-    $stmt = $conn->prepare($query);
-    if ($stmt) {
-        $stmt->bind_param("i", $userID);
-        if ($stmt->execute()) {
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
-                $userData = $result->fetch_assoc();
-                $userImg = $userData['userImg'];
-                $userName = $userData['userName'];
-                $userEmail = $userData['userEmail'];
-                $userBio = $userData['userBio'];
-            }
+// Fetch user details including userStatus
+$query = "SELECT userImg, userName, userEmail, userBio, userStatus FROM registered_user WHERE userID = ?";
+$stmt = $conn->prepare($query);
+if ($stmt) {
+    $stmt->bind_param("i", $userID);
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $userData = $result->fetch_assoc();
+            $userImg = $userData['userImg'];
+            $userName = $userData['userName'];
+            $userEmail = $userData['userEmail'];
+            $userBio = $userData['userBio'];
+            $userStatus = $userData['userStatus'];
         }
-        $stmt->close();
     }
+    $stmt->close();
 }
 
 // Fetch user recipes
@@ -186,9 +186,11 @@ $result = $stmt->get_result();
             </div>
 
             <div class="action-buttons">
-                <a href="edit_recipe.php?recipeID=<?= $row['recipeID'] ?>" class="btn edit-btn btn-sm">
-                    <i class="fas fa-edit"></i> Edit
-                </a>
+                <?php if ($userStatus !== 'Banned'): ?>
+                    <a href="edit_recipe.php?recipeID=<?= $row['recipeID'] ?>" class="btn edit-btn btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                <?php endif; ?>
                 <a href="delete_recipe.php?recipeID=<?= $row['recipeID'] ?>" class="btn delete-btn btn-sm" 
                    onclick="return confirm('Are you sure you want to delete this recipe?');">
                     <i class="fas fa-trash-alt"></i> Delete
@@ -205,6 +207,7 @@ $result = $stmt->get_result();
 
 </body>
 </html>
+
 
 
 
