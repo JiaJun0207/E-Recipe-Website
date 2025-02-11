@@ -75,9 +75,36 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+            .add-recipe-btn {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #ff4500;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .add-recipe-btn:hover {
+            background-color: #e03e00;
+            transform: translateY(-1px);
+        }
+</style>
 </head>
 <body>
 <?php include('header.php'); ?>
+
+<!-- Add Recipe Button -->
+<?php if ($isLoggedIn): ?>
+    <a href="addRecipe.php" class="add-recipe-btn">+ Add Recipe</a>
+<?php endif; ?>
 <div class="container mt-4">
     <div class="row">
         <!-- Sidebar -->
