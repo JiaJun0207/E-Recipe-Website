@@ -225,7 +225,7 @@ if (!isset($_SESSION['userID'])) {
         <p>Welcome, <strong><?php echo htmlspecialchars($userName); ?></strong></p>
         <div class="mb-3">
             <label class="form-label">Bio:</label>
-            <textarea class="form-control" disabled><?php echo htmlspecialchars($userBio); ?></textarea>
+            <p class="form-control" disabled><?php echo htmlspecialchars($userBio); ?></p>
         </div>
         <div class="mb-3">
             <label class="form-label">Status:</label>
