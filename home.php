@@ -32,12 +32,13 @@ if (isset($_SESSION['userID'])) {
     }
 }
 
-// Fetch recipes
-$sql = "SELECT r.recipeID, r.recipeImg, r.recipeName, r.recipeStatus, r.recipeDesc, r.recipeIngred, 
-               u.userName AS creator, d.mealDiff 
+// Fetch top 6 most favorite recipes
+$sql = "SELECT r.recipeID, r.recipeImg, r.recipeName, COUNT(f.favID) AS favorite_count
         FROM recipe r
-        JOIN registered_user u ON r.userID = u.userID
-        JOIN meal_difficulty d ON r.diffID = d.diffID";
+        JOIN favorite f ON r.recipeID = f.recipeID
+        GROUP BY r.recipeID
+        ORDER BY favorite_count DESC
+        LIMIT 6";
 $result = $conn->query($sql);
 ?>
 
@@ -77,8 +78,8 @@ $result = $conn->query($sql);
         }
 
         .hero img {
-            height: 60px; /* Adjust this value for proper size */
-            margin-right: 10px; /* Space between logo and text */
+            height: 60px;
+            margin-right: 10px;
         }
 
         .hero-content {
@@ -87,6 +88,52 @@ $result = $conn->query($sql);
             gap: 15px;
         }
 
+        .recipe-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .recipe-card {
+            text-decoration: none;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 250px;
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .recipe-card:hover {
+            transform: scale(1.05);
+        }
+
+        .recipe-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .recipe-card h5 {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        .favorite-count {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .recipe-card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -95,10 +142,23 @@ $result = $conn->query($sql);
 <header class="hero">
     <div class="hero-content">
         <img src="assets/pic/TastyTrioLogo.png" alt="Tasty Trio Recipe Logo">
-        <h1 >Welcome to Tasty Trio Recipe</h1>
+        <h1>Welcome to Tasty Trio Recipe</h1>
     </div>
 </header>
-<h1>Most Favourite Recipe</h1>
+
+<h1 class="text-center mt-4">Most Favourite Recipes</h1>
+
+<!-- Show top 6 most favorite recipes -->
+<div class="recipe-container">
+    <?php while ($row = $result->fetch_assoc()) { ?>
+        <a href="user_recipe_details.php?id=<?= $row['recipeID'] ?>" class="recipe-card">
+            <img src="uploads/<?= $row['recipeImg'] ?>" alt="<?= $row['recipeName'] ?>">
+            <h5><?= $row['recipeName'] ?></h5>
+            <p class="favorite-count"><i class="fa fa-heart"></i> <?= $row['favorite_count'] ?> Favorites</p>
+        </a>
+    <?php } ?>
+</div>
+
 <?php include('about_us.php'); ?>
 </body>
 </html>
