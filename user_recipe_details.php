@@ -48,7 +48,6 @@ if (!$recipe) {
     exit();
 }
 
-// Check if the recipe is already in the user's favorites
 $isFavorite = false;
 if ($isLoggedIn) {
     $favQuery = "SELECT * FROM favourite WHERE userID = ? AND recipeID = ?";
@@ -58,6 +57,10 @@ if ($isLoggedIn) {
     $favResult = $favStmt->get_result();
     $isFavorite = $favResult->num_rows > 0;
 }
+
+// Fetch ratings from the database
+$ratingQuery = "SELECT ratingID, ratingText FROM rating";
+$ratingResult = $conn->query($ratingQuery);
 
 // Handle comment submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
@@ -73,7 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
     }
 }
 
-// Fetch existing comments
 $commentsQuery = "SELECT feedback.*, registered_user.userName FROM feedback 
                   JOIN registered_user ON feedback.userID = registered_user.userID
                   WHERE feedback.recipeID = ? ORDER BY feedbackDate DESC";
@@ -106,24 +108,22 @@ $commentsResult = $commentsStmt->get_result();
 
     <a href="eRecipeList.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back to All Recipe</a>
 
-    <!-- Favorite Star Icon -->
     <?php if ($isLoggedIn): ?>
         <i id="favoriteStar" class="<?= $isFavorite ? 'fas' : 'far' ?> fa-star favorite-icon" 
            data-recipe-id="<?= $recipeID ?>" 
            style="font-size: 24px; color: #ffd700; cursor: pointer;"></i>
     <?php endif; ?>
     
-        <!-- Comment & Rating Form -->
-        <?php if ($isLoggedIn): ?>
+    <?php if ($isLoggedIn): ?>
         <form method="POST" class="mt-4">
             <div class="mb-3">
                 <label for="rating" class="form-label">Rating:</label>
                 <select name="rating" class="form-select" required>
-                    <option value="1">1 - Poor</option>
-                    <option value="2">2 - Fair</option>
-                    <option value="3">3 - Good</option>
-                    <option value="4">4 - Very Good</option>
-                    <option value="5">5 - Excellent</option>
+                    <?php while ($rating = $ratingResult->fetch_assoc()): ?>
+                        <option value="<?= $rating['ratingID'] ?>">
+                            <?= $rating['ratingID'] ?> - <?= $rating['ratingText'] ?>
+                        </option>
+                    <?php endwhile; ?>
                 </select>
             </div>
             <div class="mb-3">
@@ -136,7 +136,6 @@ $commentsResult = $commentsStmt->get_result();
         <p><a href="login.php">Log in</a> to leave a comment.</p>
     <?php endif; ?>
 
-    <!-- Display Comments -->
     <h3 class="mt-4">User Feedback</h3>
     <?php while ($comment = $commentsResult->fetch_assoc()): ?>
         <div class="card mt-3">
@@ -163,11 +162,7 @@ $commentsResult = $commentsStmt->get_result();
                 data: { recipeID: recipeID },
                 dataType: "json",
                 success: function (response) {
-                    if (response.status === "added") {
-                        starIcon.removeClass("far").addClass("fas"); // Filled star
-                    } else if (response.status === "removed") {
-                        starIcon.removeClass("fas").addClass("far"); // Outlined star
-                    }
+                    starIcon.toggleClass("fas far");
                 },
                 error: function () {
                     alert("An error occurred. Please try again.");
