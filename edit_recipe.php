@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $recipeName = $_POST['recipeName'];
     $recipeIngred = $_POST['recipeIngred'];
     $recipeDesc = $_POST['recipeDesc'];
-    $recipeStatus = $_POST['recipeStatus'];
+    $recipeStatus = "Re-Submitted"; // Automatically set to "Re-Submitted" when updating
 
     // Handle Image Upload (if a new image is uploaded)
     if (!empty($_FILES['recipeImg']['name'])) {
@@ -48,9 +48,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // Update query
-    $updateQuery = "UPDATE recipe SET recipeName = ?, recipeIngred = ?, recipeDesc = ?, recipeStatus = ?, recipeImg = ? WHERE recipeID = ? AND userID = ?";
+    $updateQuery = "UPDATE recipe SET recipeName = ?, recipeIngred = ?, recipeDesc = ?, recipeStatus = 'Re-Submitted', recipeImg = ? WHERE recipeID = ? AND userID = ?";
     $updateStmt = $conn->prepare($updateQuery);
-    $updateStmt->bind_param("ssssssi", $recipeName, $recipeIngred, $recipeDesc, $recipeStatus, $targetFile, $recipeID, $userID);
+    $updateStmt->bind_param("sssssi", $recipeName, $recipeIngred, $recipeDesc, $targetFile, $recipeID, $userID); 
 
     if ($updateStmt->execute()) {
         echo "<script>alert('Recipe updated successfully!'); window.location='user_recipe.php';</script>";
@@ -87,14 +87,6 @@ $stmt->close();
         <div class="mb-3">
             <label class="form-label">Description</label>
             <textarea name="recipeDesc" class="form-control" rows="5" required><?= htmlspecialchars($recipe['recipeDesc']) ?></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Recipe Status</label>
-            <select name="recipeStatus" class="form-control">
-                <option value="Pending" <?= $recipe['recipeStatus'] === "Pending" ? "selected" : "" ?>>Pending</option>
-                <option value="Approved" <?= $recipe['recipeStatus'] === "Approved" ? "selected" : "" ?>>Approved</option>
-                <option value="Rejected" <?= $recipe['recipeStatus'] === "Rejected" ? "selected" : "" ?>>Rejected</option>
-            </select>
         </div>
         <div class="mb-3">
             <label class="form-label">Recipe Image</label>

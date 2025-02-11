@@ -58,13 +58,14 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     }
 
     // Fetch recipe details
-    $query = "SELECT recipe.*, registered_user.userName, registered_user.userImg AS creatorImg, 
-                     meal_difficulty.mealDiff, meal_type.mealType 
-              FROM recipe 
-              LEFT JOIN registered_user ON recipe.userID = registered_user.userID
-              LEFT JOIN meal_difficulty ON recipe.diffID = meal_difficulty.diffID
-              LEFT JOIN meal_type ON recipe.typeID = meal_type.typeID
-              WHERE recipe.recipeID = ?";
+    $query = "SELECT recipe.recipeID, recipe.recipeName, recipe.recipeImg, recipe.recipeIngred, recipe.recipeDesc, 
+              registered_user.userName, registered_user.userImg AS creatorImg, 
+              meal_difficulty.mealDiff, meal_type.mealType 
+            FROM recipe 
+            LEFT JOIN registered_user ON recipe.userID = registered_user.userID
+            LEFT JOIN meal_difficulty ON recipe.diffID = meal_difficulty.diffID
+            LEFT JOIN meal_type ON recipe.typeID = meal_type.typeID
+            WHERE recipe.recipeID = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $recipeID);
     $stmt->execute();
@@ -194,6 +195,14 @@ $commentsResult = $commentsStmt->get_result();
     <p><strong>Author:</strong> <?= htmlspecialchars($recipe['userName']) ?></p>
     <p><strong>Difficulty:</strong> <?= htmlspecialchars($recipe['mealDiff']) ?></p>
     <p><strong>Meal Type:</strong> <?= htmlspecialchars($recipe['mealType']) ?></p>
+    <p><strong>Ingredients:</strong></p>
+        <ul>
+            <?php 
+            $ingredients = explode("\n", $recipe['recipeIngred']); // Split ingredients into a list
+            foreach ($ingredients as $ingredient): ?>
+                <li><?= htmlspecialchars($ingredient) ?></li>
+            <?php endforeach; ?>
+        </ul>
     <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($recipe['recipeDesc'])) ?></p>
     <!-- Favorite Button -->
     <form id="favoriteForm">
