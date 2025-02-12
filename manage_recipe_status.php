@@ -1,6 +1,10 @@
 <?php
 include 'db.php';
-
+session_start();
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: admin-login.php");
+    exit();
+}
 // Handle update status request
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_recipeID'])) {
     $recipeID = $_POST['edit_recipeID'];

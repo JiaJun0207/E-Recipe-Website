@@ -1,5 +1,10 @@
-<?php include 'db.php'; ?>
-
+<?php include 'db.php'; 
+session_start();
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: admin-login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
